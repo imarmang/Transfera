@@ -1,12 +1,9 @@
 package com.example.transfera.product;
 
-import com.example.transfera.Exceptions.ProductNotFoundException;
-import com.example.transfera.product.model.ErrorResponse;
 import com.example.transfera.product.model.Product;
 import com.example.transfera.product.model.ProductDTO;
 import com.example.transfera.product.model.UpdateProductCommand;
 import com.example.transfera.product.services.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +17,20 @@ public class ProductController {
     private final DeleteProductService deleteProductService;
     private final UpdateProductService updateProductService;
     private final GetProductService getProductService;
+    private final SearchProductService searchProductService;
 
     public ProductController( CreateProductService createProductService,
-                             GetProductsService getProductsService,
-                             DeleteProductService deleteProductService,
-                             UpdateProductService updateProductService,
-                              GetProductService getProductService) {
+                              GetProductsService getProductsService,
+                              DeleteProductService deleteProductService,
+                              UpdateProductService updateProductService,
+                              GetProductService getProductService,
+                              SearchProductService searchProductService ) {
         this.createProductService = createProductService;
         this.getProductsService = getProductsService;
         this.deleteProductService = deleteProductService;
         this.updateProductService = updateProductService;
         this.getProductService = getProductService;
+        this.searchProductService = searchProductService;
     }
 
     @PostMapping("product")
@@ -47,6 +47,12 @@ public class ProductController {
     public ResponseEntity<ProductDTO> getProductById( @PathVariable Integer id ) {
         return getProductService.execute( id );
     }
+
+    @GetMapping("/product/search" )
+    public ResponseEntity<List<ProductDTO>> searchProductByName( @RequestParam String name ) {
+        return searchProductService.execute( name );
+    }
+
 
     @PutMapping( "/product/{id}")
     public ResponseEntity<ProductDTO> updateProduct( @PathVariable Integer id, @RequestBody Product product ) {
