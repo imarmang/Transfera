@@ -1,6 +1,6 @@
 package com.example.transfera.product.services;
 
-import com.example.transfera.Exceptions.ProductNotFoundException;
+import com.example.transfera.exceptions.ProductNotFoundException;
 import com.example.transfera.Query;
 import com.example.transfera.product.ProductRepository;
 import com.example.transfera.product.model.Product;

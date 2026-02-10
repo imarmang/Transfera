@@ -1,4 +1,4 @@
-package com.example.transfera.Exceptions;
+package com.example.transfera.exceptions;
 
 
 public class ProductNotFoundException extends RuntimeException

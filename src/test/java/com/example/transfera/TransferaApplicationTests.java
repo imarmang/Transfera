@@ -8,6 +8,8 @@ class TransferaApplicationTests {
 
 	@Test
 	void contextLoads() {
+        // SANITY TEST OR A TEST THAT SHOULD ALWAYS PASS
+        // MAKES SURE NO COMPILE ISSUES
 	}
 
 }

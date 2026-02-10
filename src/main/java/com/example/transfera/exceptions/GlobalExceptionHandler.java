@@ -1,4 +1,4 @@
-package com.example.transfera.Exceptions;
+package com.example.transfera.exceptions;
 
 import com.example.transfera.product.model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;

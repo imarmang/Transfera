@@ -33,34 +33,34 @@ public class ProductController {
         this.searchProductService = searchProductService;
     }
 
-    @PostMapping("product")
+    @PostMapping( "product" )
     public ResponseEntity<ProductDTO> createProduct( @RequestBody Product product ) {
         return createProductService.execute( product );
     }
 
-    @GetMapping ("/products")
+    @GetMapping ("/products" )
     public ResponseEntity<List<ProductDTO>> getProducts() {
         return getProductsService.execute( null );
     }
 
-    @GetMapping( "/product/{id}")
+    @GetMapping( "/product/{id}" )
     public ResponseEntity<ProductDTO> getProductById( @PathVariable Integer id ) {
         return getProductService.execute( id );
     }
 
-    @GetMapping("/product/search" )
+    @GetMapping( "/product/search" )
     public ResponseEntity<List<ProductDTO>> searchProductByName( @RequestParam String name ) {
         return searchProductService.execute( name );
     }
 
 
-    @PutMapping( "/product/{id}")
+    @PutMapping( "/product/{id}" )
     public ResponseEntity<ProductDTO> updateProduct( @PathVariable Integer id, @RequestBody Product product ) {
 
         return updateProductService.execute( new UpdateProductCommand( id, product ) );
     }
 
-    @DeleteMapping("/product/{id}")  // id must match id in
+    @DeleteMapping( "/product/{id}" )  // id must match id in
     public ResponseEntity<Void> deleteProduct( @PathVariable Integer id ) {
         return deleteProductService.execute( id );
     }
