@@ -366,3 +366,134 @@ Consider defining a bean of type 'org.springframework.cache.CacheManager' in you
 2026-02-10T14:21:24.620-05:00  INFO 35282 --- [Transfera] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-02-10T14:21:24.621-05:00  INFO 35282 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2026-02-10T14:21:24.622-05:00  INFO 35282 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-10T14:48:22.849-05:00  INFO 36248 --- [Transfera] [main] c.e.transfera.TransferaApplication       : Starting TransferaApplication using Java 17.0.18 with PID 36248 (/Users/imarmang/Local Desktop/Transfera/build/classes/java/main started by imarmang in /Users/imarmang/Local Desktop/Transfera)
+2026-02-10T14:48:22.850-05:00  INFO 36248 --- [Transfera] [main] c.e.transfera.TransferaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-02-10T14:48:23.190-05:00  INFO 36248 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-10T14:48:23.210-05:00  INFO 36248 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 2 JPA repository interfaces.
+2026-02-10T14:48:23.380-05:00  INFO 36248 --- [Transfera] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-02-10T14:48:23.385-05:00  INFO 36248 --- [Transfera] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-10T14:48:23.385-05:00  INFO 36248 --- [Transfera] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-10T14:48:23.408-05:00  INFO 36248 --- [Transfera] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 542 ms
+2026-02-10T14:48:23.491-05:00  INFO 36248 --- [Transfera] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-10T14:48:23.518-05:00  INFO 36248 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-10T14:48:23.668-05:00  INFO 36248 --- [Transfera] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-10T14:48:23.680-05:00  INFO 36248 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-10T14:48:23.749-05:00  INFO 36248 --- [Transfera] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@13cf5f8a
+2026-02-10T14:48:23.750-05:00  INFO 36248 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-10T14:48:23.783-05:00  INFO 36248 --- [Transfera] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/transfera]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.11
+	Default catalog/schema: transfera/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-10T14:48:24.246-05:00  INFO 36248 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-10T14:48:24.305-05:00  INFO 36248 --- [Transfera] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:48:24.336-05:00  WARN 36248 --- [Transfera] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'catFactController' defined in file [/Users/imarmang/Local Desktop/Transfera/build/classes/java/main/com/example/transfera/CatFact/CatFactController.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.example.transfera.CatFact.CatFactService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-02-10T14:48:24.336-05:00  INFO 36248 --- [Transfera] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:48:24.338-05:00  INFO 36248 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-10T14:48:24.340-05:00  INFO 36248 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-10T14:48:24.341-05:00  INFO 36248 --- [Transfera] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-02-10T14:48:24.345-05:00  INFO 36248 --- [Transfera] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-10T14:48:24.353-05:00 ERROR 36248 --- [Transfera] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.transfera.CatFact.CatFactController required a bean of type 'com.example.transfera.CatFact.CatFactService' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.transfera.CatFact.CatFactService' in your configuration.
+
+2026-02-10T14:49:44.220-05:00  INFO 36297 --- [Transfera] [main] c.e.transfera.TransferaApplication       : Starting TransferaApplication using Java 17.0.18 with PID 36297 (/Users/imarmang/Local Desktop/Transfera/build/classes/java/main started by imarmang in /Users/imarmang/Local Desktop/Transfera)
+2026-02-10T14:49:44.221-05:00  INFO 36297 --- [Transfera] [main] c.e.transfera.TransferaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-02-10T14:49:44.592-05:00  INFO 36297 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-10T14:49:44.612-05:00  INFO 36297 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 2 JPA repository interfaces.
+2026-02-10T14:49:44.776-05:00  INFO 36297 --- [Transfera] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-02-10T14:49:44.780-05:00  INFO 36297 --- [Transfera] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-10T14:49:44.780-05:00  INFO 36297 --- [Transfera] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-10T14:49:44.794-05:00  INFO 36297 --- [Transfera] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 558 ms
+2026-02-10T14:49:44.854-05:00  INFO 36297 --- [Transfera] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-10T14:49:44.875-05:00  INFO 36297 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-10T14:49:45.014-05:00  INFO 36297 --- [Transfera] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-10T14:49:45.026-05:00  INFO 36297 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-10T14:49:45.085-05:00  INFO 36297 --- [Transfera] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@584136c1
+2026-02-10T14:49:45.085-05:00  INFO 36297 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-10T14:49:45.130-05:00  INFO 36297 --- [Transfera] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/transfera]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.11
+	Default catalog/schema: transfera/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-10T14:49:45.583-05:00  INFO 36297 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-10T14:49:45.632-05:00  INFO 36297 --- [Transfera] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:49:45.688-05:00  INFO 36297 --- [Transfera] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-10T14:49:45.948-05:00  WARN 36297 --- [Transfera] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-10T14:49:46.090-05:00  INFO 36297 --- [Transfera] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-02-10T14:49:46.093-05:00  INFO 36297 --- [Transfera] [main] c.e.transfera.TransferaApplication       : Started TransferaApplication in 2.024 seconds (process running for 2.262)
+2026-02-10T14:50:27.344-05:00  INFO 36297 --- [Transfera] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-10T14:50:27.345-05:00  INFO 36297 --- [Transfera] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-10T14:50:27.349-05:00  INFO 36297 --- [Transfera] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-02-10T14:51:35.775-05:00  INFO 36297 --- [Transfera] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-10T14:51:35.781-05:00  INFO 36297 --- [Transfera] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-02-10T14:51:35.785-05:00  INFO 36297 --- [Transfera] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:51:35.788-05:00  INFO 36297 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-10T14:51:35.790-05:00  INFO 36297 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-10T14:52:08.562-05:00  INFO 36453 --- [Transfera] [main] c.e.transfera.TransferaApplication       : Starting TransferaApplication using Java 17.0.18 with PID 36453 (/Users/imarmang/Local Desktop/Transfera/build/classes/java/main started by imarmang in /Users/imarmang/Local Desktop/Transfera)
+2026-02-10T14:52:08.563-05:00  INFO 36453 --- [Transfera] [main] c.e.transfera.TransferaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-02-10T14:52:08.903-05:00  INFO 36453 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-10T14:52:08.927-05:00  INFO 36453 --- [Transfera] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 2 JPA repository interfaces.
+2026-02-10T14:52:09.100-05:00  INFO 36453 --- [Transfera] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-02-10T14:52:09.104-05:00  INFO 36453 --- [Transfera] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-10T14:52:09.104-05:00  INFO 36453 --- [Transfera] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-10T14:52:09.119-05:00  INFO 36453 --- [Transfera] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 542 ms
+2026-02-10T14:52:09.172-05:00  INFO 36453 --- [Transfera] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-10T14:52:09.190-05:00  INFO 36453 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-10T14:52:09.329-05:00  INFO 36453 --- [Transfera] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-10T14:52:09.341-05:00  INFO 36453 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-10T14:52:09.399-05:00  INFO 36453 --- [Transfera] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@319b1c77
+2026-02-10T14:52:09.400-05:00  INFO 36453 --- [Transfera] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-10T14:52:09.429-05:00  INFO 36453 --- [Transfera] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/transfera]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.11
+	Default catalog/schema: transfera/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-10T14:52:09.738-05:00  INFO 36453 --- [Transfera] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-10T14:52:09.782-05:00  INFO 36453 --- [Transfera] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:52:09.835-05:00  INFO 36453 --- [Transfera] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-10T14:52:10.055-05:00  WARN 36453 --- [Transfera] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-02-10T14:52:10.171-05:00  INFO 36453 --- [Transfera] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-02-10T14:52:10.174-05:00  INFO 36453 --- [Transfera] [main] c.e.transfera.TransferaApplication       : Started TransferaApplication in 1.769 seconds (process running for 1.978)
+2026-02-10T14:52:19.041-05:00  INFO 36453 --- [Transfera] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-10T14:52:19.041-05:00  INFO 36453 --- [Transfera] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-10T14:52:19.043-05:00  INFO 36453 --- [Transfera] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-02-10T14:52:48.802-05:00  INFO 36453 --- [Transfera] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-02-10T14:52:48.806-05:00  INFO 36453 --- [Transfera] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-02-10T14:52:48.809-05:00  INFO 36453 --- [Transfera] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-10T14:52:48.811-05:00  INFO 36453 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-10T14:52:48.812-05:00  INFO 36453 --- [Transfera] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
