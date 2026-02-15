@@ -1,5 +1,6 @@
 package com.example.transfera.security;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,11 +17,12 @@ public class SecurityController {
         return "CLOSED";
     }
 
+    @PreAuthorize( "hasRole('superuser')" )
     @GetMapping( "/special" )
     public String special() {
         return "SPECIAL";
     }
-
+    @PreAuthorize( "hasRole('superuser') or hasRole('basicuser')" )
     @GetMapping( "/basic" )
     public String basic() {
         return "BASIC";
