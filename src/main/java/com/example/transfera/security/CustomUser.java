@@ -15,12 +15,15 @@ public class CustomUser {
     @Column(name="username")
     private String username;
 
-    @Id
+//    @Id
     @Column(name="password")
     private String password;
+
+    public CustomUser() {}
 
     public CustomUser( String username, String password ) {
         this.username = username;
         this.password = password;
     }
+
 }

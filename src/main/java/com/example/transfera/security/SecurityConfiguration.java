@@ -2,39 +2,25 @@ package com.example.transfera.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
-    
-    @Bean
-    public UserDetailsService userDetailsService( PasswordEncoder encoder) {
-        UserDetails admin = User
-                .withUsername( "admin" )
-                .authorities( "BASIC", "SPECIAL" )
-                .roles( "superuser" )
-                .password( encoder.encode( "1" ) )  // spring boot won't let you use raw text for passwords
-                .build();
 
-        UserDetails user = User
-                .withUsername( "user" )
-                .authorities( "BASIC" )
-                .roles( "basicuser" )
-                .password( encoder.encode( "2" ) )
-                .build();
-        return new InMemoryUserDetailsManager( admin, user );
+    @Bean
+    public AuthenticationManager authenticationManagerBean( HttpSecurity http ) throws Exception {
+        return http.getSharedObject( AuthenticationManagerBuilder.class ).build();
     }
 
     @Bean
@@ -43,21 +29,24 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain( HttpSecurity httpSecurity ) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity ) throws Exception {
         return  httpSecurity
                 // DISABLE CSRF TO ALLOW POST, PUT, DELETE mappings with authentication
 //                .csrf( csrf -> csrf.disable() ) // same thing
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeHttpRequests( authorize -> {
+
+                    // have to let user create new without valid credentials
+                    authorize.requestMatchers( "/createnewuser" ).permitAll();
+
+                    // must be at the bottom
                     authorize.anyRequest().authenticated();
-//                    authorize.requestMatchers( "/open" ).permitAll();
-//                    authorize.requestMatchers( "/closed" ).authenticated();
-//                    authorize.requestMatchers( HttpMethod.POST, "/product" ).authenticated();
-//
-//                    authorize.requestMatchers( HttpMethod.GET, "/special" ).hasAuthority( "SPECIAL" );
-//                    authorize.requestMatchers( HttpMethod.GET, "/basic" ).hasAnyAuthority( "SPECIAL", "BASIC" );
+
                 })
-                .httpBasic( ( Customizer.withDefaults() ) )
+                .addFilterBefore(
+                        new BasicAuthenticationFilter( authenticationManagerBean( httpSecurity ) ),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .build();
     }
 }

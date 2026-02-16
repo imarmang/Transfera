@@ -31,9 +31,10 @@ public class CreateNewUserController {
 
         if ( !optionalUser.isPresent() ) {
             customUserRepository.save( new CustomUser( customUser.getUsername(), passwordEncoder.encode(customUser.getPassword() ) ) );
-            return ResponseEntity.ok().build( "Success" );
+            return ResponseEntity.ok().body( "Success" );
+
         }
 
-        return ResponseEntity.badRequest().build( "Failure" );
+        return ResponseEntity.badRequest().body( "Failure" );
     }
 }
