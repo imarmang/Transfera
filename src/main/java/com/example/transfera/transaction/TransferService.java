@@ -44,7 +44,7 @@ public class TransferService implements Command<TransferDTO, String> {
 
     private void deduct( BankAccount bankAccount, double amount ) {
         if ( bankAccount.getBalance() < amount ) {
-            throw new RuntimeException( "not Enough Money" );
+            throw new RuntimeException( "Not Enough Money" );
         }
 
         bankAccount.setBalance( bankAccount.getBalance() - amount );
