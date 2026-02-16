@@ -1,5 +1,6 @@
 package com.example.transfera.security;
 
+import com.example.transfera.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,7 @@ public class SecurityConfiguration {
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeHttpRequests( authorize -> {
 
+                    authorize.requestMatchers( "/login" ).permitAll();
                     // have to let user create new without valid credentials
                     authorize.requestMatchers( "/createnewuser" ).permitAll();
 
@@ -44,9 +46,13 @@ public class SecurityConfiguration {
 
                 })
                 .addFilterBefore(
-                        new BasicAuthenticationFilter( authenticationManagerBean( httpSecurity ) ),
-                        UsernamePasswordAuthenticationFilter.class
-                )
+                        jwtAuthenticationFilter() ,
+                        UsernamePasswordAuthenticationFilter.class )
                 .build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter();
     }
 }
