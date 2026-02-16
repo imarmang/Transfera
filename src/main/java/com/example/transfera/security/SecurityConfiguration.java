@@ -37,12 +37,13 @@ public class SecurityConfiguration {
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeHttpRequests( authorize -> {
 
-                    authorize.requestMatchers( "/login" ).permitAll();
-                    // have to let user create new without valid credentials
-                    authorize.requestMatchers( "/createnewuser" ).permitAll();
-
-                    // must be at the bottom
-                    authorize.anyRequest().authenticated();
+                    authorize.anyRequest().permitAll();
+//                    authorize.requestMatchers( "/login" ).permitAll();
+//                    // have to let user create new without valid credentials
+//                    authorize.requestMatchers( "/createnewuser" ).permitAll();
+//
+//                    // must be at the bottom
+//                    authorize.anyRequest().authenticated();
 
                 })
                 .addFilterBefore(

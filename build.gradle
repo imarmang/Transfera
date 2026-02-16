@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // actuator
-    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 
     implementation "io.jsonwebtoken:jjwt-api:0.12.6"
