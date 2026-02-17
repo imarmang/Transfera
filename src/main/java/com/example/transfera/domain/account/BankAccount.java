@@ -2,21 +2,32 @@
 
 package com.example.transfera.domain.account;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.example.transfera.domain.user.User;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
+// bank account entity, which holds the account number, balance,
+// there is a one-to-one relationship between the user and the account
 @Entity
 @Data
-@Table(name="bank")
+@Table( name="bank_account" )
 public class BankAccount {
 
     @Id
-    @Column(name="name")
-    private String name;
+    @Column( name="id" )
+    private UUID id;
 
-    @Column(name="balance")
-    private double balance;
+    @Column( name="account_number" )
+    private String accountNumber;
+
+    @Column( name="balance" )
+    private BigDecimal balance;
+
+    @OneToOne
+    @JoinColumn( name="user_id" )
+    private User user;
+
 }

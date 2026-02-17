@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GetAccountsService implements Query<Void, List<BankAccountDTO>> {
+public class GetBankAccountsService implements Query<Void, List<BankAccountDTO>> {
     private final BankAccountRepository bankAccountRepository;
 
-    public GetAccountsService(BankAccountRepository bankAccountRepository) {
+    public GetBankAccountsService( BankAccountRepository bankAccountRepository ) {
         this.bankAccountRepository = bankAccountRepository;
     }
 
