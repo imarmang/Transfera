@@ -1,4 +1,6 @@
-package com.example.transfera.transaction;
+
+
+package com.example.transfera.domain.account;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

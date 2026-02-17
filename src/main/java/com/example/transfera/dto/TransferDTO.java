@@ -1,4 +1,4 @@
-package com.example.transfera.transaction;
+package com.example.transfera.dto;
 
 import lombok.Data;
 

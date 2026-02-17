@@ -1,6 +1,7 @@
-package com.example.transfera.security.jwt;
+package com.example.transfera.controller;
 
 import com.example.transfera.security.CustomUser;
+import com.example.transfera.security.jwt.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
