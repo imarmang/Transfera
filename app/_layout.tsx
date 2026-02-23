@@ -17,8 +17,14 @@ function RootNavigator() {
   return (
     <Stack>
       {/* Authenticated Area */}
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack.Protected>
 
       {/* Logged-Out Area */}
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="signin" options={{ title: "Sign In" }} />
+      </Stack.Protected>
     </Stack>
   );
 }
