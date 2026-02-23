@@ -1,12 +1,9 @@
 package com.example.transfera.controller;
 
-import com.example.transfera.domain.account.BankAccount;
-import com.example.transfera.dto.BankAccountDTO;
-import com.example.transfera.dto.UpdateBankAccountCommand;
-import com.example.transfera.service.accounts.DeleteBankAccountService;
-import com.example.transfera.service.accounts.GetBankAccountService;
-import com.example.transfera.service.accounts.GetBankAccountsService;
-import com.example.transfera.service.accounts.UpdateBankAccountService;
+import com.example.transfera.domain.bank_account.BankAccount;
+import com.example.transfera.dto.bankaccount.BankAccountDTO;
+import com.example.transfera.dto.bankaccount.UpdateBankAccountCommand;
+import com.example.transfera.service.bank_accounts.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +18,15 @@ public class BankController {
     private final GetBankAccountService getBankAccountService;
     private final UpdateBankAccountService updateBankAccountService;
     private final DeleteBankAccountService deleteBankAccountService;
+    private final CreateBankAccountService createBankAccountService;
 
 
-    public BankController(GetBankAccountsService getBankAccountsService, GetBankAccountService getBankAccountService, UpdateBankAccountService updateBankAccountService, DeleteBankAccountService deleteBankAccountService) {
+    public BankController(GetBankAccountsService getBankAccountsService, GetBankAccountService getBankAccountService, UpdateBankAccountService updateBankAccountService, DeleteBankAccountService deleteBankAccountService, CreateBankAccountService createBankAccountService) {
         this.getBankAccountsService = getBankAccountsService;
         this.getBankAccountService = getBankAccountService;
         this.updateBankAccountService = updateBankAccountService;
         this.deleteBankAccountService = deleteBankAccountService;
+        this.createBankAccountService = createBankAccountService;
     }
 
     // RETURNS ALL THE ACCOUNTS
@@ -40,6 +39,12 @@ public class BankController {
     public ResponseEntity<BankAccountDTO> getBankAccountById(@PathVariable UUID id ) {
         return getBankAccountService.execute( id );
     }
+
+    @PostMapping( "/account" )
+    public ResponseEntity<BankAccountDTO> createProduct( @RequestBody BankAccount bankAccount ) {
+        return createBankAccountService.execute( bankAccount );
+    }
+
 //    FUTURE IMPLEMENTATION IF I ADD CATEGORIES
 //    @GetMapping( "account/search" )
 //    public ResponseEntity<List<BankAccountDTO>> searchAccountByName( @RequestParam String name ) {}
@@ -53,5 +58,8 @@ public class BankController {
     public ResponseEntity<Void> deleteBankAccountById( @PathVariable UUID id ) {
         return deleteBankAccountService.execute( id );
     }
+
+
+
 
 }

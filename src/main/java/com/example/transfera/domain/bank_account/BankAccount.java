@@ -1,6 +1,4 @@
-
-
-package com.example.transfera.domain.account;
+package com.example.transfera.domain.bank_account;
 
 import com.example.transfera.domain.user.User;
 import jakarta.persistence.*;

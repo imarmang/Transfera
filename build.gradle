@@ -29,6 +29,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // SWAGGER
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1"
+
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 

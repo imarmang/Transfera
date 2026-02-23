@@ -1,9 +1,9 @@
-package com.example.transfera.service.accounts;
+package com.example.transfera.service.bank_accounts;
 
 import com.example.transfera.Query;
-import com.example.transfera.domain.account.BankAccount;
-import com.example.transfera.domain.account.BankAccountRepository;
-import com.example.transfera.dto.BankAccountDTO;
+import com.example.transfera.domain.bank_account.BankAccount;
+import com.example.transfera.domain.bank_account.BankAccountRepository;
+import com.example.transfera.dto.bankaccount.BankAccountDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

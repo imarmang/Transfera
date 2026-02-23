@@ -11,5 +11,4 @@ public class TransferaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TransferaApplication.class, args);
 	}
-
 }

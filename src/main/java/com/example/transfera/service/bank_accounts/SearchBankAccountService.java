@@ -6,7 +6,7 @@ might be an overkill class, will check later
 //
 //import com.example.transfera.Query;
 //import com.example.transfera.domain.account.BankAccountRepository;
-//import com.example.transfera.dto.BankAccountDTO;
+//import com.example.transfera.dto.bankaccount.BankAccountDTO;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.stereotype.Service;
 //

@@ -1,6 +1,6 @@
-package com.example.transfera.dto;
+package com.example.transfera.dto.bankaccount;
 
-import com.example.transfera.domain.account.BankAccount;
+import com.example.transfera.domain.bank_account.BankAccount;
 import lombok.Data;
 
 import java.math.BigDecimal;

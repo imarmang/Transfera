@@ -1,4 +1,4 @@
-package com.example.transfera.domain.account;
+package com.example.transfera.domain.bank_account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
