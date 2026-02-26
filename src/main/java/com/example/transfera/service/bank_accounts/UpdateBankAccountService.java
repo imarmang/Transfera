@@ -5,8 +5,8 @@ package com.example.transfera.service.bank_accounts;
 import com.example.transfera.Command;
 import com.example.transfera.domain.bank_account.BankAccount;
 import com.example.transfera.domain.bank_account.BankAccountRepository;
-import com.example.transfera.dto.bankaccount.BankAccountDTO;
-import com.example.transfera.dto.bankaccount.UpdateBankAccountCommand;
+import com.example.transfera.dto.BankAccountDTO.BankAccountDTO;
+import com.example.transfera.dto.BankAccountDTO.UpdateBankAccountCommand;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

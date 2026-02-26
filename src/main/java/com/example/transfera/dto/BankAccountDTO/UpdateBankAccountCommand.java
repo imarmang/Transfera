@@ -1,4 +1,4 @@
-package com.example.transfera.dto.bankaccount;
+package com.example.transfera.dto.BankAccountDTO;
 
 import com.example.transfera.domain.bank_account.BankAccount;
 import lombok.Getter;

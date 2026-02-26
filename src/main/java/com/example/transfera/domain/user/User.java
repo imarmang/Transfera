@@ -1,37 +1,29 @@
 package com.example.transfera.domain.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table( name="app_user" )
 public class User {
     @Id
+    @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name="id", updatable = false, nullable = false )
     private UUID id;
 
-    @Column ( name="username", length=50 )
-    private String username;
+    @Column ( name="email", length=100, unique = true, nullable = false )
+    private String email;
 
     @Column ( name="password", length=300 )
     private String password;
 
-    @Column ( name="email", length=100 )
-    private String email;
-
-    @Column ( name="first_name", length=50 )
-    private String firstName;
-
-    @Column ( name="last_name", length=50 )
-    private String lastName;
-
-    @Column ( name="phone_number", length=50 )
-    private String phoneNumber;
-
+    public User( String email, String password ) {
+        this.email = email;
+        this.password = password;
+    }
 }

@@ -25,8 +25,6 @@ public class UserController {
         this.deleteUserService = deleteUserService;
     }
 
-
-
     @PutMapping( "/user/{id}" )
     public ResponseEntity<UserDTO> execute( @RequestBody User user ) {
         return createUserService.execute( user );
