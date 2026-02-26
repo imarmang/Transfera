@@ -35,7 +35,6 @@ public class Profile {
 
 
     public Profile( String username, String firstName, String lastName, String phoneNumber, User user ) {
-        this.id = id;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
