@@ -1,34 +1,27 @@
 package com.example.transfera.exceptions;
 
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler( BankAccountNotFoundException.class )
-    public ResponseEntity<ErrorResponse> handleProductNotFoundException( BankAccountNotFoundException exception ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body( new ErrorResponse( exception.getMessage() ) );
+    @ExceptionHandler(BankAccountNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFoundException(BankAccountNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body( new ErrorResponse(exception.getMessage() ) );
     }
 
-//    @ExceptionHandler( ProductNotValidException.class )
-//    @ResponseBody
-//    @ResponseStatus( HttpStatus.BAD_REQUEST )
-//    public ErrorResponse handleProductNotValidException( ProductNotValidException exception ) {
-//        return new ErrorResponse( exception.getMessage() );
-//    }
-//
-//    @ExceptionHandler( ConstraintViolationException.class )
-//    @ResponseBody
-//    @ResponseStatus( HttpStatus.BAD_REQUEST )
-//    public ErrorResponse handleProductNotValidConstraints( ConstraintViolationException exception ) {
-//
-//        // JUST RETURNS FIRST ERROR, NOT ALL OF THEM
-//        return new ErrorResponse( exception.getConstraintViolations().iterator().next().getMessage() );
-//    }
+    @ExceptionHandler( UserNotFound.class )
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException( UserNotFound exception ) {
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( new ErrorResponse( exception.getMessage() ) );
+    }
+
+    @ExceptionHandler( FeatureNotImplemented.class )
+    public ResponseEntity<ErrorResponse> handleFeatureNotImplemented( FeatureNotImplemented exception ) {
+        return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).body( new ErrorResponse( exception.getMessage() ) );
+    }
+
 }

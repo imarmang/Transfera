@@ -7,6 +7,7 @@ import com.example.transfera.domain.bank_account.BankAccount;
 import com.example.transfera.domain.bank_account.BankAccountRepository;
 import com.example.transfera.dto.BankAccountDTO.BankAccountDTO;
 import com.example.transfera.dto.BankAccountDTO.UpdateBankAccountCommand;
+import com.example.transfera.exceptions.BankAccountNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,6 @@ public class UpdateBankAccountService implements Command< UpdateBankAccountComma
             return ResponseEntity.ok( new BankAccountDTO( bankAccount ) );
 
         }
-        return null;
+        throw new BankAccountNotFoundException();
     }
 }
