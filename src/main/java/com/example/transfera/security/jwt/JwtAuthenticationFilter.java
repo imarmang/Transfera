@@ -12,6 +12,13 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+
+    public JwtAuthenticationFilter( JwtUtil jwtUtil ) {
+        this.jwtUtil = jwtUtil;
+    }
+
     @Override
     protected void doFilterInternal( HttpServletRequest request,
                                      HttpServletResponse response,
@@ -25,9 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = authHeader.substring( 7 );
         }
 
-        if ( token != null && JwtUtil.isTokenValid( token ) ) {
+        if ( token != null && jwtUtil.isTokenValid( token ) ) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    JwtUtil.getClaims(token).getSubject(),
+                    jwtUtil.getClaims(token).getSubject(),
                     null,  // VERIFIED CREDENTIALS WHEN CALLING isTokenValid()
                     Collections.emptyList()  // roles and authorities
             );

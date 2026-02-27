@@ -1,6 +1,8 @@
 package com.example.transfera.config;
 
+import com.example.transfera.security.UserDetailsServiceImpl;
 import com.example.transfera.security.jwt.JwtAuthenticationFilter;
+import com.example.transfera.security.jwt.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,18 +10,35 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+// THIS CLASS IS THE MANAGER THAT CHECKS IF THE EMAIL EXISTS AND THEN CHECKS FOR THE PASSWORDS
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final JwtUtil jwtUtil;
+
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsServiceImpl, JwtUtil jwtUtil) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.jwtUtil = jwtUtil;
+    }
+
+
+
     @Bean
     public AuthenticationManager authenticationManagerBean( HttpSecurity http ) throws Exception {
-        return http.getSharedObject( AuthenticationManagerBuilder.class ).build();
+        AuthenticationManagerBuilder builder = http.getSharedObject( AuthenticationManagerBuilder.class );
+        builder
+                .userDetailsService( userDetailsServiceImpl )  // returns email exists
+                .passwordEncoder( passwordEncoder() );  // checks if the passwords match
+
+        return builder.build();
     }
 
     @Bean
@@ -31,17 +50,17 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity ) throws Exception {
         return  httpSecurity
                 // DISABLE CSRF TO ALLOW POST, PUT, DELETE mappings with authentication
-//                .csrf( csrf -> csrf.disable() ) // same thing
+                //.csrf( csrf -> csrf.disable() ) // same thing
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeHttpRequests( authorize -> {
-
-                    authorize.anyRequest().permitAll();
-//                    authorize.requestMatchers( "/login" ).permitAll();
-//                    // have to let user create new without valid credentials
-//                    authorize.requestMatchers( "/createnewuser" ).permitAll();
-//
-//                    // must be at the bottom
-//                    authorize.anyRequest().authenticated();
+                    authorize.requestMatchers( "/login",
+                            "/api/v1/users",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**"
+                    ).permitAll();
+                    // must be at the bottom
+                    authorize.anyRequest().authenticated();
 
                 })
                 .addFilterBefore(
@@ -51,7 +70,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter();
+    public JwtAuthenticationFilter jwtAuthenticationFilter(){
+        return new JwtAuthenticationFilter( jwtUtil);
     }
 }
