@@ -1,6 +1,6 @@
 package com.example.transfera.domain.profile;
 
-import com.example.transfera.domain.user.User;
+import com.example.transfera.domain.user.UserCredentials;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,14 +31,14 @@ public class Profile {
 
     @OneToOne ( fetch = FetchType.LAZY )
     @JoinColumn( name="user_id", nullable = false, unique = true )
-    private User user;
+    private UserCredentials userCredentials;
 
 
-    public Profile( String username, String firstName, String lastName, String phoneNumber, User user ) {
+    public Profile( String username, String firstName, String lastName, String phoneNumber, UserCredentials userCredentials) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.user = user;
+        this.userCredentials = userCredentials;
     }
 }

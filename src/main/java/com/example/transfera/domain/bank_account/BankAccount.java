@@ -1,6 +1,6 @@
 package com.example.transfera.domain.bank_account;
 
-import com.example.transfera.domain.user.User;
+import com.example.transfera.domain.user.UserCredentials;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,6 +27,6 @@ public class BankAccount {
 
     @OneToOne
     @JoinColumn( name="user_id" )
-    private User user;
+    private UserCredentials userCredentials;
 
 }

@@ -3,7 +3,7 @@ package com.example.transfera.controller;
 import com.example.transfera.domain.bank_account.BankAccount;
 import com.example.transfera.dto.BankAccountDTO.BankAccountDTO;
 import com.example.transfera.dto.BankAccountDTO.UpdateBankAccountCommand;
-import com.example.transfera.service.bank_accounts.*;
+import com.example.transfera.service.bankAccounts.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

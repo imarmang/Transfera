@@ -1,16 +1,10 @@
 package com.example.transfera.controller;
 
-import com.example.transfera.domain.user.User;
+import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
-import com.example.transfera.dto.UserDTO.UserDTO;
-import com.example.transfera.security.jwt.JwtUtil;
-import org.apache.coyote.Response;
+import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -34,24 +28,24 @@ public class LoginController {
         this.userCredentialsRepository = userCredentialsRepository;
     }
 
-    public record LoginResponse(String loginSuccessful, UserDTO userDTO) {
+    public record LoginResponse(String loginSuccessful, UserCredentialsResponseDTO userCredentialsResponseDTO) {
     }
     public record LoginRequest( String email, String password ) {}
 
     @PostMapping("/login")
     public ResponseEntity<?> login( @RequestBody LoginRequest loginRequest ){
-        Optional<User> maybeUser = userCredentialsRepository.findByEmail( loginRequest.email() );
+        Optional<UserCredentials> maybeUser = userCredentialsRepository.findByEmail( loginRequest.email() );
 
         if (maybeUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( "Invalid email" );
         }
 
-        User user = maybeUser.get();
+        UserCredentials userCredentials = maybeUser.get();
 
-        if ( !loginRequest.password().equals( user.getPassword()) ) {
+        if ( !loginRequest.password().equals( userCredentials.getPassword()) ) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( "Invalid password" );
         }
-        return ResponseEntity.ok( new LoginResponse( "Login successful", new UserDTO( user ) ) );
+        return ResponseEntity.ok( new LoginResponse( "Login successful", new UserCredentialsResponseDTO(userCredentials) ) );
 
     }
 }

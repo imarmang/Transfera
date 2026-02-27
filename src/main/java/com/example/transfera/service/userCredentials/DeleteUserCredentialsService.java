@@ -1,7 +1,7 @@
-package com.example.transfera.service.user;
+package com.example.transfera.service.userCredentials;
 
 import com.example.transfera.Command;
-import com.example.transfera.domain.user.User;
+import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
 import com.example.transfera.exceptions.UserNotFound;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class DeleteUserCredentialsService implements Command<UUID, Void> {
 
     @Override
     public ResponseEntity<Void> execute( UUID input ) {
-        Optional<User> user = userCredentialsRepository.findById( input );
+        Optional<UserCredentials> user = userCredentialsRepository.findById( input );
 
         if ( user.isPresent() ) {
             userCredentialsRepository.deleteById( input );

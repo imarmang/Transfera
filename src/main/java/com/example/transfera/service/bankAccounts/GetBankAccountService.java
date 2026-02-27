@@ -1,4 +1,4 @@
-package com.example.transfera.service.bank_accounts;
+package com.example.transfera.service.bankAccounts;
 
 import com.example.transfera.Query;
 import com.example.transfera.domain.bank_account.BankAccount;

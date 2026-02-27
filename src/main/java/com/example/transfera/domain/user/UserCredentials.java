@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table( name="app_user" )
-public class User {
+public class UserCredentials {
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name="id", updatable = false, nullable = false )
@@ -22,7 +22,7 @@ public class User {
     @Column ( name="password", length=300 )
     private String password;
 
-    public User( String email, String password ) {
+    public UserCredentials(String email, String password ) {
         this.email = email;
         this.password = password;
     }
