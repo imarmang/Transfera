@@ -15,14 +15,15 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { signIn } = useSession(); // <-- from ctx.tsx
+  const { signIn } = useSession();
 
-  function onSignIn() {
-    // For now: no real auth, just set a mock session (ctx.tsx does setSession("xxx"))
-    signIn();
-
-    // Go into the authenticated area
-    router.replace("/");
+  async function onSignIn() {
+    try {
+      await signIn(email, password); // pass credentials to ctx.tsx
+      router.replace("/");
+    } catch (e) {
+      alert("Login failed. Check your email and password.");
+    }
   }
 
   return (
