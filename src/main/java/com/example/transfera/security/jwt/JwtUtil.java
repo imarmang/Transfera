@@ -1,6 +1,7 @@
 package com.example.transfera.security.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -42,8 +43,11 @@ public class JwtUtil {
     }
 
     public boolean isTokenValid( String token ) {
-        return !isExpired( token );
-    }
+        try {
+            return !isExpired(token);
+        } catch ( JwtException | IllegalArgumentException e) {
+            return false;
+        }    }
 
     private boolean isExpired( String token) {
         return getClaims( token ).getExpiration().before( new Date() );

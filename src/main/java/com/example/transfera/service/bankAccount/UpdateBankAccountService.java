@@ -1,6 +1,6 @@
 // might be an overkill
 
-package com.example.transfera.service.bankAccounts;
+package com.example.transfera.service.bankAccount;
 
 import com.example.transfera.Command;
 import com.example.transfera.domain.bank_account.BankAccount;

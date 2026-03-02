@@ -1,4 +1,4 @@
-package com.example.transfera.service.userCredentials;
+package com.example.transfera.service.userCredential;
 
 import com.example.transfera.Query;
 import com.example.transfera.domain.user.UserCredentials;

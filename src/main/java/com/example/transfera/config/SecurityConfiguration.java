@@ -3,6 +3,7 @@ package com.example.transfera.config;
 import com.example.transfera.security.UserDetailsServiceImpl;
 import com.example.transfera.security.jwt.JwtAuthenticationFilter;
 import com.example.transfera.security.jwt.JwtUtil;
+import com.example.transfera.service.jwt.TokenBlacklistService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +23,12 @@ public class SecurityConfiguration {
 
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtUtil jwtUtil;
+    private final TokenBlacklistService tokenBlacklistService;
 
-    public SecurityConfiguration(UserDetailsServiceImpl userDetailsServiceImpl, JwtUtil jwtUtil) {
+    public SecurityConfiguration( UserDetailsServiceImpl userDetailsServiceImpl, JwtUtil jwtUtil, TokenBlacklistService tokenBlacklistService ) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.jwtUtil = jwtUtil;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @Bean
@@ -53,7 +56,7 @@ public class SecurityConfiguration {
                     authorize.requestMatchers(
                             "/auth/login",
                             "/auth/logout",
-                            "/api/v1/users",
+                            "/auth/register",
 
                             // USED IN SWAGGER
                             "/swagger-ui/**",
@@ -72,6 +75,6 @@ public class SecurityConfiguration {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){
-        return new JwtAuthenticationFilter( jwtUtil);
+        return new JwtAuthenticationFilter( jwtUtil, tokenBlacklistService);
     }
 }

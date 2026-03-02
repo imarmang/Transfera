@@ -3,12 +3,14 @@ package com.example.transfera.controller;
 import com.example.transfera.dto.AuthDTO.LoginRequestDTO;
 import com.example.transfera.dto.AuthDTO.LoginResponseDTO;
 import com.example.transfera.dto.AuthDTO.LogoutResponseDTO;
+import com.example.transfera.dto.AuthDTO.RegisterResponseDTO;
 import com.example.transfera.dto.UserDTO.CreateUserRequestDTO;
 import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
 import com.example.transfera.security.jwt.JwtUtil;
 import com.example.transfera.service.jwt.TokenBlacklistService;
-import com.example.transfera.service.userCredentials.CreateUserCredentialsService;
+import com.example.transfera.service.userCredential.CreateUserCredentialsService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,9 +50,26 @@ public class AuthController {
     }
 
     // POST  --> REGISTER THE USER
+    // IF SUCCESSFUL, THE FRONT END WILL render to the fill out your personal information page
     @PostMapping("/register" )
-    public ResponseEntity<UserCredentialsResponseDTO> createUser(@RequestBody CreateUserRequestDTO user ) {
-        return createUserCredentialsService.execute( user );
+    public ResponseEntity<RegisterResponseDTO> createUser( @RequestBody CreateUserRequestDTO user ) {
+        ResponseEntity<UserCredentialsResponseDTO> created =  createUserCredentialsService.execute( user );
+
+        // CHECK IF IT SUCCESSFULLY ADDED THE EMAIL AND PASSWORD
+        if ( !created.getStatusCode().is2xxSuccessful() ) {
+            return ResponseEntity.status( created.getStatusCode() ).build();
+        }
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                user.getEmail(),
+                user.getPassword()
+        );
+
+        Authentication authentication = authenticationManager.authenticate( authToken );
+        String jwt = jwtUtil.generateToken( ( User) authentication.getPrincipal() );
+
+        return ResponseEntity.status(HttpStatus.CREATED ).body( new RegisterResponseDTO( jwt ) );
+
     }
 
     // TODO token expiration
@@ -67,10 +86,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<LogoutResponseDTO> logout(HttpServletRequest request ) {
 
-        System.out.println( "=== LOGOUT HIT ✅ ===" );
-
         String authHeader = request.getHeader("Authorization");
-        System.out.println("Authorization header: " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             System.out.println("LOGOUT FAILED: No token provided");
@@ -78,8 +94,6 @@ public class AuthController {
         }
 
         String token = authHeader.substring(7);
-        System.out.println("Token prefix: " + token.substring(0, Math.min(20, token.length())));
-        System.out.println("Token length: " + token.length());
 
         // TODO: add the token to the blacklist, temporary solution
         tokenBlacklistService.blacklistToken(token);

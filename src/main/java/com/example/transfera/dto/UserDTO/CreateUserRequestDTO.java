@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  * Incoming request body for POST /api/v1/users
- * Only credentials — profile is created separately.
+ * Only credentials — CreateProfileService is created separately.
  */
 
 @Data

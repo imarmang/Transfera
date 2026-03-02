@@ -1,11 +1,9 @@
 package com.example.transfera.controller;
 
-import com.example.transfera.dto.UserDTO.CreateUserRequestDTO;
 import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
 import com.example.transfera.exceptions.FeatureNotImplemented;
-import com.example.transfera.service.userCredentials.CreateUserCredentialsService;
-import com.example.transfera.service.userCredentials.DeleteUserCredentialsService;
-import com.example.transfera.service.userCredentials.GetUsersCredentialsService;
+import com.example.transfera.service.userCredential.DeleteUserCredentialsService;
+import com.example.transfera.service.userCredential.GetUsersCredentialsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
