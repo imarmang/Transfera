@@ -52,7 +52,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests( authorize -> {
                     authorize.requestMatchers(
                             "/auth/login",
+                            "/auth/logout",
                             "/api/v1/users",
+
+                            // USED IN SWAGGER
                             "/swagger-ui/**",
                             "/swagger-ui.html",
                             "/v3/api-docs/**"
