@@ -1,7 +1,6 @@
 package com.example.transfera.controller;
 
 import com.example.transfera.dto.AuthDTO.LoginRequestDTO;
-import com.example.transfera.exceptions.FeatureNotImplemented;
 import com.example.transfera.security.jwt.JwtUtil;
 import com.example.transfera.service.jwt.TokenBlacklistService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,21 +45,47 @@ public class AuthController {
         return ResponseEntity.ok( new LoginResponse( jwt ) );
     }
 
-    @PostMapping( "/logout" )
+//    @PostMapping( "/logout" )
+//    public ResponseEntity<LogoutResponse> logout( HttpServletRequest request ) {
+//
+//        String authHeader = request.getHeader( "Authorization" );
+//
+//        if ( authHeader == null || !authHeader.startsWith( "Bearer " ) ) {
+//            return ResponseEntity.badRequest().body( new LogoutResponse( "No token provided" ) );
+//        }
+//
+//        String token = authHeader.substring( 7 );
+//
+//        // TODO: add the token to the blacklist, temporary solution
+//        tokenBlacklistService.blacklistToken( token );
+//
+//        return ResponseEntity.ok( new LogoutResponse( "Logged out Successfully" ) );
+//    }
+
+    // DELETE, USED FOR DEBUGGING
+    @PostMapping("/logout")
     public ResponseEntity<LogoutResponse> logout( HttpServletRequest request ) {
 
-        String authHeader = request.getHeader( "Authorization" );
+        System.out.println( "=== LOGOUT HIT ✅ ===" );
 
-        if ( authHeader == null || !authHeader.startsWith( "Bearer " ) ) {
-            return ResponseEntity.badRequest().body( new LogoutResponse( "No token provided" ) );
+        String authHeader = request.getHeader("Authorization");
+        System.out.println("Authorization header: " + authHeader);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("LOGOUT FAILED: No token provided");
+            return ResponseEntity.badRequest().body(new LogoutResponse("No token provided"));
         }
 
-        String token = authHeader.substring( 7 );
+        String token = authHeader.substring(7);
+        System.out.println("Token prefix: " + token.substring(0, Math.min(20, token.length())));
+        System.out.println("Token length: " + token.length());
 
-        // TODO: add the token to the blacklist, temporary solution
-        tokenBlacklistService.blacklistToken( token );
+        tokenBlacklistService.blacklistToken(token);
 
-        return ResponseEntity.ok( new LogoutResponse( "Logged out Successfully" ) );
+        LogoutResponse resp = new LogoutResponse("Logged out Successfully");
+        System.out.println("Logout response JSON: {\"message\":\"" + resp.message() + "\"}");
+
+        return ResponseEntity.ok(resp);
     }
 
     // TODO token expiration

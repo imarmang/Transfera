@@ -13,8 +13,17 @@ public class TokenBlacklistService {
     private final Set<String> blacklistedTokens = ConcurrentHashMap.newKeySet();
 
     // BLACK LIST THE TOKEN
+//    public void blacklistToken( String token ) {
+//        blacklistedTokens.add( token );
+//    }
+
     public void blacklistToken( String token ) {
-        blacklistedTokens.add( token );
+        boolean added = blacklistedTokens.add(token);
+
+        System.out.println("=== BLACKLIST ADD ===");
+        System.out.println("Added? " + added);
+        System.out.println("Blacklist size: " + blacklistedTokens.size());
+        System.out.println("Token prefix: " + token.substring(0, Math.min(20, token.length())));
     }
 
     // CHECK IF THE TOKEN IS IN THE SET
