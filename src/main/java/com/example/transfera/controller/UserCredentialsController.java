@@ -16,30 +16,20 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 public class UserCredentialsController {
 
-    private final CreateUserCredentialsService createUserCredentialsService;
     private final GetUsersCredentialsService getUsersCredentialsService;
     private final DeleteUserCredentialsService deleteUserCredentialsService;
 
     public UserCredentialsController(
-            CreateUserCredentialsService createUserCredentialsService,
             GetUsersCredentialsService getUsersCredentialsService,
             DeleteUserCredentialsService deleteUserCredentialsService ) {
-        this.createUserCredentialsService = createUserCredentialsService;
         this.getUsersCredentialsService = getUsersCredentialsService;
         this.deleteUserCredentialsService = deleteUserCredentialsService;
     }
-
 
     // GET    /api/v1/users         — list all users
     @GetMapping
     public ResponseEntity<List<UserCredentialsResponseDTO>> getUsers() {
         return getUsersCredentialsService.execute( null );
-    }
-
-    // POST   /api/v1/users
-    @PostMapping
-    public ResponseEntity<UserCredentialsResponseDTO> createUser( @RequestBody CreateUserRequestDTO user ) {
-        return createUserCredentialsService.execute( user );
     }
 
     // DELETE /api/v1/users/{id}
