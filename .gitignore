@@ -41,7 +41,3 @@ src/main/resources/application.yml
 .env
 .env.*
 .DS_Store
-
-application.properties
-
-

@@ -44,4 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter( request, response );
     }
+
+    // TODO, CREATE A TOKEN BLACKLIST AFTER THE USER LOGS OUT
 }

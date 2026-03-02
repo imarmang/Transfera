@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,8 +27,6 @@ public class SecurityConfiguration {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.jwtUtil = jwtUtil;
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManagerBean( HttpSecurity http ) throws Exception {
@@ -53,7 +50,8 @@ public class SecurityConfiguration {
                 //.csrf( csrf -> csrf.disable() ) // same thing
                 .csrf( AbstractHttpConfigurer::disable )
                 .authorizeHttpRequests( authorize -> {
-                    authorize.requestMatchers( "/login",
+                    authorize.requestMatchers(
+                            "/auth/login",
                             "/api/v1/users",
                             "/swagger-ui/**",
                             "/swagger-ui.html",
