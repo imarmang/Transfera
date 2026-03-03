@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
-import { SessionProvider, useSession } from "@/ctx";
-import { SplashScreenController } from "@/splash";
+import { SessionProvider, useSession } from "@/src/context/AuthContext";
+import { SplashScreenController } from "@/src/splash";
 
 export default function RootLayout() {
   return (

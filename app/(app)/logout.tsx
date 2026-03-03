@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { useSession } from "@/ctx";
+import { useSession } from "@/src/context/AuthContext";
 
 export default function Logout() {
   const { signOut, session } = useSession();

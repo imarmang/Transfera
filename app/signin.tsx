@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
-import { useSession } from "../ctx"; // <-- from the guide
+import { useSession } from "@/src/context/AuthContext"; // <-- from the guide
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ export default function SignIn() {
 
   async function onSignIn() {
     try {
-      await signIn(email, password); // pass credentials to ctx.tsx
+      await signIn(email, password); // pass credentials to AuthContext.tsx
       router.replace("/");
     } catch (e) {
       alert("Login failed. Check your email and password.");
