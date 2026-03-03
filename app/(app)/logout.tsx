@@ -3,15 +3,27 @@ import { router } from "expo-router";
 import { useSession } from "@/ctx";
 
 export default function Logout() {
-  const { signOut } = useSession();
+  const { signOut, session } = useSession();
 
   return (
     <View style={styles.container}>
       <Pressable
         style={styles.button}
-        onPress={() => {
-          signOut(); // clears SecureStore "session"
-          router.replace("/signin"); // optional, guards will redirect anyway
+        onPress={async () => {
+          console.log("[Logout] Button pressed");
+          console.log("[Logout] session exists?", !!session);
+          console.log("[Logout] token prefix:", session?.slice(0, 20));
+
+          try {
+            console.log("[Logout] calling signOut()...");
+            await signOut();
+            console.log("[Logout] signOut() finished ✅");
+          } catch (e) {
+            console.log("[Logout] signOut() failed ❌", e);
+          }
+
+          console.log("[Logout] navigating to /signin");
+          router.replace("/signin");
         }}
       >
         <Text style={styles.text}>Sign Out</Text>
