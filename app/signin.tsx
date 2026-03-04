@@ -9,20 +9,32 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
-import { useSession } from "@/src/context/AuthContext"; // <-- from the guide
+import { useSession } from "@/src/context/AuthContext";
+import { colors } from "@/src/themes/colors"; // <-- from the guide
 
 export default function SignIn() {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const { signIn } = useSession();
 
   async function onSignIn() {
+    setError("");
+
+    if (!email || !password) {
+      setError("Please enter your email and password");
+      return;
+    }
     try {
+      setLoading(true);
       await signIn(email, password); // pass credentials to AuthContext.tsx
       router.replace("/");
     } catch (e) {
-      alert("Login failed. Check your email and password.");
+      setError("Login failed. Check your email and password.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -62,8 +74,22 @@ export default function SignIn() {
             style={styles.input}
           />
 
-          <Pressable style={styles.primaryButton} onPress={onSignIn}>
-            <Text style={styles.primaryButtonText}>Sign In</Text>
+          {error ? (
+            <View style={styles.errorBox}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
+          <Pressable
+            style={[
+              styles.primaryButton,
+              loading && styles.primaryButtonDisabled,
+            ]}
+            onPress={onSignIn}
+            disabled={loading}
+          >
+            <Text style={styles.primaryButtonText}>
+              {loading ? "Signing in..." : "Sign in"}
+            </Text>
           </Pressable>
 
           <Pressable
@@ -73,6 +99,15 @@ export default function SignIn() {
             <Text style={styles.linkText}>Forgot your password?</Text>
           </Pressable>
         </View>
+        <Pressable
+          onPress={() => router.replace("/register")}
+          style={styles.registerButton}
+        >
+          <Text style={styles.registerText}>
+            {"Don't have an account?"}{" "}
+            <Text style={styles.registerTextBold}>Create One</Text>
+          </Text>
+        </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
@@ -84,6 +119,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
     gap: 16,
+    backgroundColor: colors.background,
   },
   header: {
     alignItems: "center",
@@ -95,12 +131,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: "grey",
+    color: colors.subtitleText,
   },
   card: {
     borderRadius: 18,
     padding: 16,
-    backgroundColor: "#F2F2F2",
+    backgroundColor: colors.card,
   },
   label: {
     fontSize: 14,
@@ -110,7 +146,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     paddingHorizontal: 12,
-    backgroundColor: "white",
+    backgroundColor: colors.input,
     fontSize: 16,
     marginTop: 6,
   },
@@ -120,10 +156,11 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "black",
+    backgroundColor: colors.primary,
   },
+  primaryButtonDisabled: { backgroundColor: colors.primaryDisabled },
   primaryButtonText: {
-    color: "white",
+    color: colors.primaryText,
     fontSize: 16,
     fontWeight: "800",
   },
@@ -133,6 +170,29 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 14,
-    color: "black",
+    color: colors.bodyText,
+  },
+  errorBox: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: colors.errorBackground,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  registerButton: {
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  registerText: {
+    fontSize: 14,
+    color: colors.bodyText,
+  },
+  registerTextBold: {
+    fontWeight: "800",
   },
 });

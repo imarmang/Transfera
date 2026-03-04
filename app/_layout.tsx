@@ -23,7 +23,7 @@ function RootNavigator() {
 
       {/* Logged-Out Area */}
       <Stack.Protected guard={!session}>
-        <Stack.Screen name="signin" options={{ title: "Sign In" }} />
+        <Stack.Screen name="signin" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );
