@@ -12,18 +12,25 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session } = useSession();
+  const { session, isLoading, hasProfile } = useSession();
 
+  if (isLoading) return null;
   return (
     <Stack>
-      {/* Authenticated Area */}
-      <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-      </Stack.Protected>
-
       {/* Logged-Out Area */}
       <Stack.Protected guard={!session}>
         <Stack.Screen name="signin" options={{ headerShown: false }} />
+        <Stack.Screen name="register" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      {/* Fully Authenticated but has profile Area */}
+      <Stack.Protected guard={!!session && !hasProfile}>
+        <Stack.Screen name="create-profile" options={{ headerShown: false }} />
+      </Stack.Protected>
+
+      {/* Fully Authenticated and has profile Area */}
+      <Stack.Protected guard={!!session && hasProfile}>
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );

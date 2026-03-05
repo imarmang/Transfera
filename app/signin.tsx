@@ -20,18 +20,42 @@ export default function SignIn() {
 
   const { signIn } = useSession();
 
+  // async function onSignIn() {
+  //   setError("");
+  //
+  //   if (!email || !password) {
+  //     setError("Please enter your email and password");
+  //     return;
+  //   }
+  //   try {
+  //     setLoading(true);
+  //     await signIn(email, password); // pass credentials to AuthContext.tsx
+  //     router.replace("/");
+  //   } catch (e) {
+  //     setError("Login failed. Check your email and password.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
   async function onSignIn() {
     setError("");
+    console.log("onSignIn triggered");
+    console.log("Fields:", { email, password: password ? "***" : "empty" });
 
     if (!email || !password) {
       setError("Please enter your email and password");
+      console.log("Validation failed - missing fields");
       return;
     }
+
     try {
       setLoading(true);
-      await signIn(email, password); // pass credentials to AuthContext.tsx
+      console.log("Calling signIn...");
+      await signIn(email, password);
+      console.log("signIn successful, navigating to /register");
       router.replace("/");
     } catch (e) {
+      console.log("signIn error:", e);
       setError("Login failed. Check your email and password.");
     } finally {
       setLoading(false);
@@ -93,12 +117,25 @@ export default function SignIn() {
           </Pressable>
 
           <Pressable
-            onPress={() => console.log("Forgot your password")}
+            onPress={() => setError("Feature not yet implemented")}
             style={styles.linkButton}
           >
             <Text style={styles.linkText}>Forgot your password?</Text>
           </Pressable>
         </View>
+
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <Pressable
+          onPress={() => setError("Google Sign in is not yet implemented.")}
+          style={styles.googleButton}
+        >
+          <Text style={styles.googleButtonText}>🇬Sign in with Google</Text>
+        </Pressable>
         <Pressable
           onPress={() => router.replace("/register")}
           style={styles.registerButton}
@@ -194,5 +231,34 @@ const styles = StyleSheet.create({
   },
   registerTextBold: {
     fontWeight: "800",
+  },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.input,
+  },
+  dividerText: {
+    fontSize: 13,
+    color: colors.bodyText,
+  },
+  googleButton: {
+    height: 52,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.input,
+    marginTop: 8,
+  },
+  googleButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
