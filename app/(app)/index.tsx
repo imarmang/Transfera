@@ -1,111 +1,123 @@
-import { Link } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { use, useState } from "react";
+import { Pressable, StyleSheet, View, Text } from "react-native";
 import { colors } from "@/src/themes/colors";
-import { useState } from "react";
 
-export default function Home() {
+export default function Send() {
   const [error, setError] = useState("");
-  return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>Accounts</Text>
-          <Text style={styles.headerSubtitle}>Good morning 👋</Text>
-        </View>
-        <View style={styles.profileIcon}>
-          <Text style={styles.profileIconText}>👤</Text>
-        </View>
-      </View>
+  const [amount, setAmount] = useState("");
 
-      {/* Balance Card */}
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>Transfera Balance</Text>
-        <Text style={styles.balanceAmount}>$1,000.00</Text>
-        <View style={styles.balanceAction}>
+  function handleKey(key: string) {
+    if (key === "⌫") setAmount("0");
+    else if (key === "." && (amount.includes(".") || Number(amount) < 1))
+      return;
+    else if (key === "0" && amount === "0") return;
+    else if (amount === "0" && key != "0") setAmount(key);
+    else setAmount((prev) => prev + key);
+  }
+
+  return (
+    <View style={styles.container}>
+      {/*  Top Bar */}
+      <View style={styles.topBar}>
+        <Pressable
+          style={styles.topBarIcon}
+          onPress={() => setError("QR code is not yet implemented")}
+        >
+          <Text style={styles.topBarEmoji}>⬛</Text>
+        </Pressable>
+
+        <View style={styles.topBarRight}>
           <Pressable
-            style={styles.balanceButton}
-            onPress={() => setError("Add money is not yet implemented")}
+            style={styles.topBarIcon}
+            onPress={() => setError("Search is not yet implemented")}
           >
-            <Text style={styles.balanceButtonText}>Add Money</Text>
+            <Text style={styles.topBarEmoji}>🔍</Text>
           </Pressable>
+
           <Pressable
-            style={styles.balanceButton}
-            onPress={() => setError("Cash out is not yet implemented")}
+            style={styles.topBarIcon}
+            onPress={() => setError("Profile is not yet implemented")}
           >
-            <Text style={styles.balanceButtonText}>Cash Out</Text>
+            <Text style={styles.topBarEmoji}>👤</Text>
           </Pressable>
         </View>
       </View>
+      {/* End of Top Bar */}
+
       {error ? (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : null}
-      {/* Temporary Log out button*/}
-      <Link href="/logout">
-        <Text>Go to Logout</Text>
-      </Link>
-    </ScrollView>
+
+      {/* Amount to display */}
+      <View style={styles.amountDisplay}>
+        <Text style={styles.amountText}>${amount}</Text>
+      </View>
+      {/* End Amount to display */}
+
+      {/* Number Pad */}
+      <View style={styles.numberPad}>
+        {["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"].map(
+          (key) => (
+            <Pressable
+              key={key}
+              style={styles.numberKey}
+              onPress={() => handleKey(key)}
+            >
+              <Text style={styles.numberKeyText}>{key}</Text>
+            </Pressable>
+          ),
+        )}
+      </View>
+      {/* End of Number Pad */}
+
+      {/* Pay and Request Button */}
+      <View style={styles.actionButtons}>
+        <Pressable
+          style={styles.requestButton}
+          onPress={() => setError("Request button is not yet implemented.")}
+        >
+          <Text style={styles.requestButtonText}>Request</Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.payButton}
+          onPress={() => setError("Pay button is not yet implemented.")}
+        >
+          <Text style={styles.payButtonText}>Pay</Text>
+        </Pressable>
+      </View>
+      {/* End of Pay and Request Button */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
+  topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 16,
   },
-  headerTitle: { fontSize: 28, fontWeight: "800" },
-  headerSubtitle: { fontSize: 14, color: colors.subtitleText, marginTop: 2 },
-
-  scroll: { flex: 1, backgroundColor: colors.background },
-  scrollContent: { padding: 20, paddingTop: 60, gap: 12 },
-  profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  topBarIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.card,
     alignItems: "center",
     justifyContent: "center",
   },
-  profileIconText: {
-    fontSize: 18,
+  topBarEmoji: {
+    fontSize: 22,
   },
-
-  balanceCard: {
-    borderRadius: 18,
-    padding: 24,
-    backgroundColor: "#1A1A1A",
-    gap: 8,
-  },
-  balanceLabel: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 14,
-  },
-  balanceAmount: {
-    color: "white",
-    fontSize: 36,
-    fontWeight: "800",
-  },
-  balanceAction: { flexDirection: "row", gap: 10, marginTop: 12 },
-
-  balanceButton: {
-    flex: 1,
-    height: 40,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.15)",
-  },
-  balanceButtonText: {
-    color: "white",
-    fontSize: 14,
-    fontWeight: "600",
-  },
+  topBarRight: { flexDirection: "row", gap: 8 },
   errorBox: {
     padding: 12,
     borderRadius: 10,
@@ -115,5 +127,48 @@ const styles = StyleSheet.create({
     color: colors.error,
     fontSize: 14,
     fontWeight: "600",
+  },
+  amountDisplay: { flex: 1, alignItems: "center", justifyContent: "center" },
+  amountText: { fontSize: 64, fontWeight: "800" },
+  numberPad: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 16,
+  },
+  numberKey: {
+    width: "33.33%",
+    height: 72,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  numberKeyText: {
+    fontSize: 24,
+    fontWeight: "500",
+  },
+  actionButtons: { flexDirection: "row", gap: 12, marginBottom: 32 },
+  requestButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.card,
+  },
+  requestButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  payButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primary,
+  },
+  payButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "white",
   },
 });
