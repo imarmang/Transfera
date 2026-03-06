@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors } from "@/src/themes/colors";
 import { useState } from "react";
@@ -23,10 +23,7 @@ export default function Home() {
             <Text style={styles.topBarEmoji}>🔍</Text>
           </Pressable>
 
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => setError("Profile is not yet implemented")}
-          >
+          <Pressable style={styles.topBarIcon} onPress={() => router.push("/profile")}>
             <Text style={styles.topBarEmoji}>👤</Text>
           </Pressable>
         </View>
@@ -76,7 +73,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   headerTitle: { fontSize: 28, fontWeight: "800" },
-  headerSubtitle: { fontSize: 14, color: colors.subtitleText, marginTop: 2 },
 
   scroll: { flex: 1, backgroundColor: colors.background },
   scrollContent: { padding: 20, paddingTop: 60, gap: 12 },

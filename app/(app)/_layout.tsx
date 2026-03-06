@@ -58,7 +58,6 @@ export default function AppLayout() {
           href: null,
         }}
       />
-      å
     </Tabs>
   );
 }

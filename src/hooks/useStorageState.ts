@@ -45,7 +45,7 @@ export function useStorageState(key: string): UseStateHook<string> {
     } else {
       SecureStore.getItemAsync(key).then((value) => setState(value));
     }
-  }, [key]);
+  }, [key, setState]);
 
   // Setter writes to storage + state
   const setValue = useCallback(
@@ -53,7 +53,7 @@ export function useStorageState(key: string): UseStateHook<string> {
       setState(value);
       setStorageItemAsync(key, value);
     },
-    [key],
+    [key, setState],
   );
 
   return [state, setValue];

@@ -13,7 +13,6 @@ import {
   logoutRequest,
   getProfileRequest,
 } from "@/src/services/auth.service";
-import { is } from "@babel/types";
 
 type AuthContextType = {
   signIn: (email: string, password: string) => Promise<void>;
@@ -56,7 +55,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setSession(null);
         setHasProfile(false);
       });
-  }, [session, isLoading]);
+  }, [session, isLoading, setSession]);
 
   return (
     <AuthContext.Provider

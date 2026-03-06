@@ -46,7 +46,7 @@ export default function Register() {
       setLoading(true);
       await signUp(email, password);
       router.replace("/");
-    } catch (e) {
+    } catch {
       setError("Registration failed. That email may be already in use.");
     } finally {
       setLoading(false);

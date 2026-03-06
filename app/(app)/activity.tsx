@@ -1,6 +1,7 @@
 import { ScrollView, Text, View, StyleSheet, Pressable } from "react-native";
 import { colors } from "@/src/themes/colors";
 import { useState } from "react";
+import { router } from "expo-router";
 
 export default function Activity() {
   const [error, setError] = useState("");
@@ -24,7 +25,7 @@ export default function Activity() {
 
           <Pressable
             style={styles.topBarIcon}
-            onPress={() => setError("Profile is not yet implemented")}
+            onPress={() => router.push("/profile")}
           >
             <Text style={styles.topBarEmoji}>👤</Text>
           </Pressable>
@@ -77,10 +78,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   headerTitle: { fontSize: 28, fontWeight: "800" },
-  headerSubtitle: { fontSize: 14, color: colors.subtitleText, marginTop: 2 },
 
   transactionsSection: { gap: 4 },
-  sectionTitle: { fontSize: 18, fontWeight: "800", marginBottom: 8 },
   transactionItem: {
     flexDirection: "row",
     alignItems: "center",

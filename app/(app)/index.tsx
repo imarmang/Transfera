@@ -1,17 +1,17 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { colors } from "@/src/themes/colors";
 
 export default function Send() {
   const [error, setError] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState("0");
 
   function handleKey(key: string) {
     if (key === "⌫") setAmount("0");
     else if (key === "." && (amount.includes(".") || Number(amount) < 1))
       return;
     else if (key === "0" && amount === "0") return;
-    else if (amount === "0" && key != "0") setAmount(key);
+    else if (amount === "0" && key !== "0") setAmount(key);
     else setAmount((prev) => prev + key);
   }
 
