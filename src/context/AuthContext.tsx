@@ -20,6 +20,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   session?: string | null; // store JWT here
   isLoading: boolean;
+  isProfileLoading: boolean;
   hasProfile: boolean;
   setHasProfile: (value: boolean) => void;
 };
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
   session: null,
   isLoading: false,
+  isProfileLoading: false,
   hasProfile: false,
   setHasProfile: () => {},
 });
@@ -44,16 +46,22 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
   const [hasProfile, setHasProfile] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   useEffect(() => {
     if (isLoading || !session) return;
 
+    setIsProfileLoading(true);
     getProfileRequest(session)
-      .then(setHasProfile)
+      .then((result) => {
+        setHasProfile(result);
+        setIsProfileLoading(false);
+      })
       .catch(() => {
         // Token is invalid/expired - clear the session
         setSession(null);
         setHasProfile(false);
+        setIsProfileLoading(false);
       });
   }, [session, isLoading, setSession]);
 
@@ -62,6 +70,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       value={{
         session,
         isLoading,
+        isProfileLoading,
         hasProfile,
         setHasProfile,
 

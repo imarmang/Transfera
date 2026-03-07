@@ -12,9 +12,9 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session, isLoading, hasProfile } = useSession();
+  const { session, isLoading, isProfileLoading, hasProfile } = useSession();
 
-  if (isLoading) return null;
+  if (isLoading || isProfileLoading) return null;
   return (
     <Stack>
       {/* Logged-Out Area */}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { colors } from "@/src/themes/colors";
+import { router } from "expo-router";
 
 export default function Send() {
   const [error, setError] = useState("");
@@ -36,7 +37,7 @@ export default function Send() {
 
           <Pressable
             style={styles.topBarIcon}
-            onPress={() => setError("Profile is not yet implemented")}
+            onPress={() => router.push("/profile")}
           >
             <Text style={styles.topBarEmoji}>👤</Text>
           </Pressable>
