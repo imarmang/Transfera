@@ -8,7 +8,7 @@ export default function Send() {
   const [to, setTo] = useState('');
   const [note, setNote] = useState('');
   const [selected, setSelected] = useState<string | null>(null);
-
+  const [error, setError] = useState("");
   return (
     <View style={styles.container}>
       {/* Top bar */}
@@ -100,13 +100,17 @@ export default function Send() {
           />
         </Pressable>
       </View>
-
+      {error ? (
+        <View style={styles.errorBox}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : null}
       <View style={styles.payButtonContainer}>
         <Pressable
-          // Ther user must write a note
+          // The user must write a note
           style={[styles.payButton, (!selected || !note) && styles.payButtonDisabled]}
           disabled={!selected || !note}
-          onPress={() => {}}
+          onPress={() => setError("Pay is not fully yet implemented")}
         >
           <Text style={styles.payButtonText}>Pay ${amount}</Text>
         </Pressable>
@@ -196,4 +200,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.primaryText,
   },
-});
+  errorBox: {
+    marginHorizontal: 20,
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: colors.errorBackground,
+  },
+  errorText: { color: colors.error, fontSize: 14, fontWeight: '600' },});
