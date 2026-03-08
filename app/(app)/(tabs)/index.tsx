@@ -1,18 +1,17 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, View, Text } from "react-native";
-import { colors } from "@/src/themes/colors";
-import { router } from "expo-router";
+import { useState } from 'react';
+import { Pressable, StyleSheet, View, Text } from 'react-native';
+import { colors } from '@/src/themes/colors';
+import { router } from 'expo-router';
 
-export default function Send() {
-  const [error, setError] = useState("");
-  const [amount, setAmount] = useState("0");
+export default function Index() {
+  const [error, setError] = useState('');
+  const [amount, setAmount] = useState('0');
 
   function handleKey(key: string) {
-    if (key === "⌫") setAmount("0");
-    else if (key === "." && (amount.includes(".") || Number(amount) < 1))
-      return;
-    else if (key === "0" && amount === "0") return;
-    else if (amount === "0" && key !== "0") setAmount(key);
+    if (key === '⌫') setAmount('0');
+    else if (key === '.' && (amount.includes('.') || Number(amount) < 1)) return;
+    else if (key === '0' && amount === '0') return;
+    else if (amount === '0' && key !== '0') setAmount(key);
     else setAmount((prev) => prev + key);
   }
 
@@ -22,7 +21,7 @@ export default function Send() {
       <View style={styles.topBar}>
         <Pressable
           style={styles.topBarIcon}
-          onPress={() => setError("QR code is not yet implemented")}
+          onPress={() => setError('QR code is not yet implemented')}
         >
           <Text style={styles.topBarEmoji}>⬛</Text>
         </Pressable>
@@ -30,15 +29,12 @@ export default function Send() {
         <View style={styles.topBarRight}>
           <Pressable
             style={styles.topBarIcon}
-            onPress={() => setError("Search is not yet implemented")}
+            onPress={() => setError('Search is not yet implemented')}
           >
             <Text style={styles.topBarEmoji}>🔍</Text>
           </Pressable>
 
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => router.push("/profile")}
-          >
+          <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
             <Text style={styles.topBarEmoji}>👤</Text>
           </Pressable>
         </View>
@@ -59,17 +55,11 @@ export default function Send() {
 
       {/* Number Pad */}
       <View style={styles.numberPad}>
-        {["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"].map(
-          (key) => (
-            <Pressable
-              key={key}
-              style={styles.numberKey}
-              onPress={() => handleKey(key)}
-            >
-              <Text style={styles.numberKeyText}>{key}</Text>
-            </Pressable>
-          ),
-        )}
+        {['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map((key) => (
+          <Pressable key={key} style={styles.numberKey} onPress={() => handleKey(key)}>
+            <Text style={styles.numberKeyText}>{key}</Text>
+          </Pressable>
+        ))}
       </View>
       {/* End of Number Pad */}
 
@@ -77,15 +67,12 @@ export default function Send() {
       <View style={styles.actionButtons}>
         <Pressable
           style={styles.requestButton}
-          onPress={() => setError("Request button is not yet implemented.")}
+          onPress={() => setError('Request button is not yet implemented.')}
         >
           <Text style={styles.requestButtonText}>Request</Text>
         </Pressable>
 
-        <Pressable
-          style={styles.payButton}
-          onPress={() => setError("Pay button is not yet implemented.")}
-        >
+        <Pressable style={styles.payButton} onPress={() => router.push('/send')}>
           <Text style={styles.payButtonText}>Pay</Text>
         </Pressable>
       </View>
@@ -102,9 +89,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   topBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   topBarIcon: {
@@ -112,13 +99,13 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   topBarEmoji: {
     fontSize: 22,
   },
-  topBarRight: { flexDirection: "row", gap: 8 },
+  topBarRight: { flexDirection: 'row', gap: 8 },
   errorBox: {
     padding: 12,
     borderRadius: 10,
@@ -127,49 +114,49 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
-  amountDisplay: { flex: 1, alignItems: "center", justifyContent: "center" },
-  amountText: { fontSize: 64, fontWeight: "800" },
+  amountDisplay: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  amountText: { fontSize: 64, fontWeight: '800' },
   numberPad: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: 16,
   },
   numberKey: {
-    width: "33.33%",
+    width: '33.33%',
     height: 72,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   numberKeyText: {
     fontSize: 24,
-    fontWeight: "500",
+    fontWeight: '500',
   },
-  actionButtons: { flexDirection: "row", gap: 12, marginBottom: 32 },
+  actionButtons: { flexDirection: 'row', gap: 12, marginBottom: 32 },
   requestButton: {
     flex: 1,
     height: 52,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.card,
   },
   requestButtonText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   payButton: {
     flex: 1,
     height: 52,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.primary,
   },
   payButtonText: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "white",
+    fontWeight: '700',
+    color: 'white',
   },
 });

@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 
 export default function App_Layout() {
   return (
@@ -6,8 +6,9 @@ export default function App_Layout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="profile"
-        options={{ headerShown: false, presentation: "fullScreenModal" }}
+        options={{ headerShown: false, presentation: 'fullScreenModal' }}
       />
+      <Stack.Screen name="send" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
     </Stack>
   );
 }

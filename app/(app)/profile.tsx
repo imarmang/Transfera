@@ -26,7 +26,7 @@ export default function Profile() {
     <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backChevron}>‹</Text>
+          <Text style={styles.backChevron}>✕</Text>
         </Pressable>
         <Text style={styles.headerTitle}>Profile</Text>
         <View style={{ width: 40 }} />
@@ -42,7 +42,7 @@ export default function Profile() {
       {/*  End of Avatar Section  */}
 
       {/* Account Section*/}
-      <Text style={styles.accountSection}>Account</Text>
+      <Text style={styles.sectionTitle}>Account</Text>
       <View style={styles.card}>
         <Row icon="👤" label="Personal Info" onPress={() => {}} />
         <View style={styles.separator} />
@@ -96,10 +96,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 4,
   },
-  avatarInitials: { fontSize: 32, fontWeight: '800', color: 'white' },
+  avatarInitials: { fontSize: 32, fontWeight: '800', color: colors.primaryText },
   userName: { fontSize: 22, fontWeight: '800' },
   userHandle: { fontSize: 15, fontWeight: '500', color: colors.subtitleText },
-  accountSection: {},
   card: { backgroundColor: colors.card, borderRadius: 16, overflow: 'hidden' },
   row: {
     flexDirection: 'row',
@@ -117,5 +116,14 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: colors.background,
     marginLeft: 52,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.subtitleText,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: -8,
+    marginLeft: 4,
   },
 });
