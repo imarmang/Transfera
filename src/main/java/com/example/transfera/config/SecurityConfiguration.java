@@ -57,6 +57,8 @@ public class SecurityConfiguration {
                             "/auth/login",
                             "/auth/logout",
                             "/auth/register",
+                            "/auth/forgot-password",
+                            "/auth/reset-password",
 
                             // USED IN SWAGGER
                             "/swagger-ui/**",

@@ -1,12 +1,18 @@
 package com.example.transfera.controller;
 
-import com.example.transfera.dto.AuthDTO.LoginRequestDTO;
-import com.example.transfera.dto.AuthDTO.LoginResponseDTO;
-import com.example.transfera.dto.AuthDTO.LogoutResponseDTO;
-import com.example.transfera.dto.AuthDTO.RegisterResponseDTO;
+import com.example.transfera.dto.AuthDTO.forgotPassword.ForgotPasswordRequestDTO;
+import com.example.transfera.dto.AuthDTO.forgotPassword.ForgotPasswordResponseDTO;
+import com.example.transfera.dto.AuthDTO.login.LoginRequestDTO;
+import com.example.transfera.dto.AuthDTO.login.LoginResponseDTO;
+import com.example.transfera.dto.AuthDTO.resetPassword.ResetPasswordRequestDTO;
+import com.example.transfera.dto.AuthDTO.resetPassword.ResetPasswordResponseDTO;
+import com.example.transfera.dto.AuthDTO.logout.LogoutResponseDTO;
+import com.example.transfera.dto.AuthDTO.register.RegisterResponseDTO;
 import com.example.transfera.dto.UserDTO.CreateUserRequestDTO;
 import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
 import com.example.transfera.security.jwt.JwtUtil;
+import com.example.transfera.service.forgotPassword.ForgotPasswordService;
+import com.example.transfera.service.forgotPassword.ResetPasswordService;
 import com.example.transfera.service.jwt.TokenBlacklistService;
 import com.example.transfera.service.userCredential.CreateUserCredentialsService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,12 +33,16 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final TokenBlacklistService tokenBlacklistService;
     private final CreateUserCredentialsService createUserCredentialsService;
+    private final ForgotPasswordService forgotPasswordService;
+    private final ResetPasswordService resetPasswordService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, TokenBlacklistService tokenBlacklistService, CreateUserCredentialsService createUserCredentialsService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, TokenBlacklistService tokenBlacklistService, CreateUserCredentialsService createUserCredentialsService, ForgotPasswordService forgotPasswordService, ResetPasswordService resetPasswordService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.tokenBlacklistService = tokenBlacklistService;
         this.createUserCredentialsService = createUserCredentialsService;
+        this.forgotPasswordService = forgotPasswordService;
+        this.resetPasswordService = resetPasswordService;
     }
 
     @PostMapping( "/login" )
@@ -52,7 +62,7 @@ public class AuthController {
     // POST  --> REGISTER THE USER
     // IF SUCCESSFUL, THE FRONT END WILL render to the fill out your personal information page
     @PostMapping("/register" )
-    public ResponseEntity<RegisterResponseDTO> createUser( @RequestBody CreateUserRequestDTO user ) {
+    public ResponseEntity<RegisterResponseDTO> createUser(@RequestBody CreateUserRequestDTO user ) {
         ResponseEntity<UserCredentialsResponseDTO> created =  createUserCredentialsService.execute( user );
 
         // CHECK IF IT SUCCESSFULLY ADDED THE EMAIL AND PASSWORD
@@ -103,5 +113,23 @@ public class AuthController {
 
         return ResponseEntity.ok(resp);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponseDTO> forgotPassword(@RequestBody ForgotPasswordRequestDTO request ) {
+        System.out.println( "AuthController: forgot password request for email: " + request.email() );
+        ForgotPasswordResponseDTO response = forgotPasswordService.execute( request.email() );
+
+        return ResponseEntity.ok( response );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ResetPasswordResponseDTO> resetPassword(@RequestBody ResetPasswordRequestDTO request ) {
+        System.out.println( "AuthController: reset password request for token: " + request.token() );
+
+        ResetPasswordResponseDTO response = resetPasswordService.execute( request.token(), request.newPassword() );
+        return ResponseEntity.ok( response );
+
+    }
+
 
 }

@@ -15,7 +15,7 @@ public class ProfileDTO {
 
     public ProfileDTO( Profile profile ) {
         this.id          = profile.getId();
-        this.username    = profile.getUsername();
+        this.username    = profile.getUserName();
         this.firstName   = profile.getFirstName();
         this.lastName    = profile.getLastName();
         this.phoneNumber = profile.getPhoneNumber();

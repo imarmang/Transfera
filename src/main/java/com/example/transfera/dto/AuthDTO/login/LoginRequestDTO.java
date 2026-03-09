@@ -1,4 +1,4 @@
-package com.example.transfera.dto.AuthDTO;
+package com.example.transfera.dto.AuthDTO.login;
 
 import lombok.Data;
 

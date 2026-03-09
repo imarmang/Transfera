@@ -24,4 +24,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status( HttpStatus.NOT_IMPLEMENTED ).body( new ErrorResponse( exception.getMessage() ) );
     }
 
+    @ExceptionHandler( InvalidResetTokenException.class )
+    public ResponseEntity<ErrorResponse> handleInvalidResetTokenException( InvalidResetTokenException exception ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( new ErrorResponse( exception.getMessage() ) );
+    }
+
 }

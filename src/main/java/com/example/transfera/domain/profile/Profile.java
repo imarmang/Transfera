@@ -18,7 +18,7 @@ public class Profile {
     private UUID id;
 
     @Column ( name="username", length=50, unique = true )
-    private String username;
+    private String userName;
 
     @Column ( name="first_name", length=50 )
     private String firstName;
@@ -34,8 +34,8 @@ public class Profile {
     private UserCredentials userCredentials;
 
 
-    public Profile( String username, String firstName, String lastName, String phoneNumber, UserCredentials userCredentials) {
-        this.username = username;
+    public Profile( String userName, String firstName, String lastName, String phoneNumber, UserCredentials userCredentials) {
+        this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;

@@ -22,27 +22,66 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
+//    @Override
+//    protected void doFilterInternal( HttpServletRequest request,
+//                                     HttpServletResponse response,
+//                                     FilterChain filterChain ) throws ServletException, IOException {
+//
+//        String authHeader = request.getHeader( "Authorization" );
+//        String token = null;
+//
+//        // header: Authorization  Bearer[jwt]
+//        if ( authHeader != null && authHeader.startsWith( "Bearer " ) ) {
+//            token = authHeader.substring( 7 );
+//        }
+//
+//        if ( token != null && jwtUtil.isTokenValid( token ) && !tokenBlacklistService.isBlacklisted( token ) ) {
+//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                    jwtUtil.getClaims( token ).getSubject(),
+//                    null,  // VERIFIED CREDENTIALS WHEN CALLING isTokenValid()
+//                    Collections.emptyList()  // roles and authorities
+//            );
+//            SecurityContextHolder.getContext().setAuthentication( authentication );
+//        }
+//        filterChain.doFilter( request, response );
+//    }
+
     @Override
     protected void doFilterInternal( HttpServletRequest request,
                                      HttpServletResponse response,
                                      FilterChain filterChain ) throws ServletException, IOException {
 
+        System.out.println(">>> [JwtFilter] " + request.getMethod() + " " + request.getRequestURI());
+
         String authHeader = request.getHeader( "Authorization" );
+        System.out.println(">>> [JwtFilter] Auth header: " + authHeader);
+
         String token = null;
 
-        // header: Authorization  Bearer[jwt]
         if ( authHeader != null && authHeader.startsWith( "Bearer " ) ) {
             token = authHeader.substring( 7 );
+            System.out.println(">>> [JwtFilter] Token extracted: " + token.substring(0, Math.min(20, token.length())) + "...");
+        } else {
+            System.out.println(">>> [JwtFilter] No Bearer token found");
+        }
+
+        if ( token != null ) {
+            System.out.println( ">>> [JwtFilter] Token valid: " + jwtUtil.isTokenValid( token ) );
+            System.out.println( ">>> [JwtFilter] Token blacklisted: " + tokenBlacklistService.isBlacklisted( token ) );
         }
 
         if ( token != null && jwtUtil.isTokenValid( token ) && !tokenBlacklistService.isBlacklisted( token ) ) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     jwtUtil.getClaims( token ).getSubject(),
-                    null,  // VERIFIED CREDENTIALS WHEN CALLING isTokenValid()
-                    Collections.emptyList()  // roles and authorities
+                    null,
+                    Collections.emptyList()
             );
             SecurityContextHolder.getContext().setAuthentication( authentication );
+            System.out.println( ">>> [JwtFilter] Authentication set for: " + jwtUtil.getClaims( token ).getSubject() );
+        } else {
+            System.out.println( ">>> [JwtFilter] Authentication NOT set" );
         }
+
         filterChain.doFilter( request, response );
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+
+// TODO: change the Query to do Void, BankAccountDTO instead of UUID use UUID for the admin side
 @Service
 public class GetBankAccountService implements Query<UUID, BankAccountDTO> {
 

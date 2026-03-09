@@ -27,6 +27,6 @@ public class BankAccount {
 
     @OneToOne
     @JoinColumn( name="user_id" )
-    private UserCredentials userCredentials;
 
+    private UserCredentials userCredentials;
 }
