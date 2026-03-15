@@ -1,6 +1,6 @@
-import { Stack } from "expo-router";
-import { SessionProvider, useSession } from "@/src/context/AuthContext";
-import { SplashScreenController } from "@/src/splash";
+import { Stack } from 'expo-router';
+import { SessionProvider, useSession } from '@/src/context/AuthContext';
+import { SplashScreenController } from '@/src/splash';
 
 export default function RootLayout() {
   return (
@@ -21,6 +21,7 @@ function RootNavigator() {
       <Stack.Protected guard={!session}>
         <Stack.Screen name="signin" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
+        <Stack.Screen name="forgot_password" options={{ headerShown: false }} />
       </Stack.Protected>
 
       {/* Fully Authenticated but has profile Area */}
