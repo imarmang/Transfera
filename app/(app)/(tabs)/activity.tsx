@@ -1,15 +1,14 @@
-import { ScrollView, Text, View, StyleSheet, Pressable } from "react-native";
-import { colors } from "@/src/themes/colors";
-import { useState } from "react";
-import { router } from "expo-router";
+import { ScrollView, Text, View, StyleSheet, Pressable } from 'react-native';
+import { colors } from '@/src/themes/colors';
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 export default function Activity() {
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={styles.scrollContent}
-    >
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
         <View>
           <Text style={styles.headerTitle}>Recent Activity</Text>
@@ -18,16 +17,13 @@ export default function Activity() {
         <View style={styles.topBarRight}>
           <Pressable
             style={styles.topBarIcon}
-            onPress={() => setError("Search is not yet implemented")}
+            onPress={() => setError('Search is not yet implemented')}
           >
-            <Text style={styles.topBarEmoji}>🔍</Text>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
           </Pressable>
 
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => router.push("/profile")}
-          >
-            <Text style={styles.topBarEmoji}>👤</Text>
+          <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
+            <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>
         </View>
       </View>
@@ -52,9 +48,7 @@ export default function Activity() {
         </View>
 
         <View style={styles.transactionItem}>
-          <View
-            style={[styles.transactionIcon, styles.transactionIconPositive]}
-          >
+          <View style={[styles.transactionIcon, styles.transactionIconPositive]}>
             <Text style={styles.transactionEmoji}>↓</Text>
           </View>
           <View style={styles.transactionDetails}>
@@ -72,17 +66,17 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: colors.background },
   scrollContent: { padding: 20, paddingTop: 60, gap: 12 },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  headerTitle: { fontSize: 28, fontWeight: "800" },
+  headerTitle: { fontSize: 28, fontWeight: '800' },
 
   transactionsSection: { gap: 4 },
   transactionItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.card,
@@ -93,23 +87,23 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  transactionEmoji: { color: "white", fontSize: 17, fontWeight: "800" },
+  transactionEmoji: { color: 'white', fontSize: 17, fontWeight: '800' },
   transactionDetails: { flex: 1, gap: 2 },
-  transactionName: { fontSize: 15, fontWeight: "600" },
+  transactionName: { fontSize: 15, fontWeight: '600' },
   transactionDate: { fontSize: 12, color: colors.subtitleText },
   transactionAmountNegative: {
     fontSize: 17,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.error,
   },
-  transactionIconPositive: { backgroundColor: "#1A6B3A" },
+  transactionIconPositive: { backgroundColor: '#1A6B3A' },
   transactionAmountPositive: {
     fontSize: 15,
-    fontWeight: "700",
-    color: "#1A6B3A",
+    fontWeight: '700',
+    color: '#1A6B3A',
   },
 
   topBarIcon: {
@@ -117,11 +111,11 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     backgroundColor: colors.card,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   topBarEmoji: { fontSize: 22 },
-  topBarRight: { flexDirection: "row", gap: 8 },
+  topBarRight: { flexDirection: 'row', gap: 8 },
   errorBox: {
     padding: 12,
     borderRadius: 10,
@@ -130,6 +124,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });

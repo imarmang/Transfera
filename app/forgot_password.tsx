@@ -1,4 +1,5 @@
 import { colors } from '@/src/themes/colors';
+
 import {
   KeyboardAvoidingView,
   View,
@@ -10,6 +11,7 @@ import {
 } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
+import { forgotPasswordRequest } from '@/src/services/auth.service';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -25,6 +27,7 @@ export default function ForgotPassword() {
     }
     try {
       setLoading(true);
+      await forgotPasswordRequest(email);
       setSent(true);
     } catch {
       setError('Something went wrong. Please try again.');
@@ -57,7 +60,7 @@ export default function ForgotPassword() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
-                placeholderTextColor="black"
+                placeholderTextColor={colors.subtitleText}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}

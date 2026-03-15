@@ -2,6 +2,8 @@ import { Link, router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/src/themes/colors';
 import { useState } from 'react';
+import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 export default function Home() {
   const [error, setError] = useState('');
@@ -17,11 +19,11 @@ export default function Home() {
             style={styles.topBarIcon}
             onPress={() => setError('Search is not yet implemented')}
           >
-            <Text style={styles.topBarEmoji}>🔍</Text>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
           </Pressable>
 
           <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
-            <Text style={styles.topBarEmoji}>👤</Text>
+            <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>
         </View>
       </View>

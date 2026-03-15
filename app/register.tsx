@@ -1,6 +1,6 @@
-import { useSession } from "@/src/context/AuthContext";
-import { useState } from "react";
-import { router } from "expo-router";
+import { useSession } from '@/src/context/AuthContext';
+import { useState } from 'react';
+import { router } from 'expo-router';
 
 import {
   KeyboardAvoidingView,
@@ -11,43 +11,48 @@ import {
   Text,
   TextInput,
   Pressable,
-} from "react-native";
-import { colors } from "@/src/themes/colors";
+} from 'react-native';
+import { colors } from '@/src/themes/colors';
+
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { signUp } = useSession();
 
   async function onRegister() {
     // TODO call the register api
-    setError("");
+    setError('');
 
     if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
+      setError('Please fill in all fields.');
       return;
     }
 
     if (password.length < 6) {
-      setError("Passwords must be at least 6 characters");
+      setError('Passwords must be at least 6 characters');
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError('Passwords do not match.');
       return;
     }
 
     try {
       setLoading(true);
       await signUp(email, password);
-      router.replace("/");
+      router.replace('/');
     } catch {
-      setError("Registration failed. That email may be already in use.");
+      setError('Registration failed. That email may be already in use.');
     } finally {
       setLoading(false);
     }
@@ -56,12 +61,9 @@ export default function Register() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
           {/* header, card, inputs, button*/}
           <View style={styles.header}>
@@ -75,36 +77,58 @@ export default function Register() {
               value={email}
               onChangeText={setEmail}
               placeholder="you@example.com"
-              placeholderTextColor={colors.bodyText}
+              placeholderTextColor={colors.subtitleText}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               style={styles.input}
             />
             <Text style={[styles.label, { marginTop: 12 }]}>Password</Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              placeholderTextColor={colors.bodyText}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              style={styles.input}
-            />
-            <Text style={[styles.label, { marginTop: 12 }]}>
-              Confirm Password
-            </Text>
-            <TextInput
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="••••••••"
-              placeholderTextColor={colors.bodyText}
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              style={styles.input}
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="••••••••"
+                placeholderTextColor={colors.subtitleText}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                textContentType="oneTimeCode"
+                style={styles.passwordInput}
+              />
+              <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+                <FontAwesomeIcon
+                  icon={showPassword ? faLockOpen : faLock}
+                  size={18}
+                  color={colors.subtitleText}
+                />
+              </Pressable>
+            </View>
+
+            <Text style={[styles.label, { marginTop: 12 }]}>Confirm Password</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="••••••••"
+                placeholderTextColor={colors.subtitleText}
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                textContentType="oneTimeCode"
+                style={styles.passwordInput}
+              />
+              <Pressable
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeButton}
+              >
+                <FontAwesomeIcon
+                  icon={showConfirmPassword ? faLockOpen : faLock}
+                  size={18}
+                  color={colors.subtitleText}
+                />
+              </Pressable>
+            </View>
 
             {error ? (
               <View style={styles.errorBox}>
@@ -112,25 +136,18 @@ export default function Register() {
               </View>
             ) : null}
             <Pressable
-              style={[
-                styles.primaryButton,
-                loading && styles.primaryButtonDisabled,
-              ]}
+              style={[styles.primaryButton, loading && styles.primaryButtonDisabled]}
               onPress={onRegister}
               disabled={loading}
             >
               <Text style={styles.primaryButtonText}>
-                {loading ? "Creating account..." : "Create Account"}
+                {loading ? 'Creating account...' : 'Create Account'}
               </Text>
             </Pressable>
           </View>
-          <Pressable
-            onPress={() => router.replace("/signin")}
-            style={styles.signInButton}
-          >
+          <Pressable onPress={() => router.replace('/signin')} style={styles.signInButton}>
             <Text style={styles.signinText}>
-              {"Already have an account?"}{" "}
-              <Text style={styles.signinTextBold}>Sign in</Text>
+              {'Already have an account?'} <Text style={styles.signinTextBold}>Sign in</Text>
             </Text>
           </Pressable>
         </View>
@@ -144,18 +161,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: "center",
+    justifyContent: 'center',
     gap: 16,
     backgroundColor: colors.background,
   },
 
   header: {
-    alignItems: "center",
+    alignItems: 'center',
     gap: 6,
   },
   brand: {
     fontSize: 36,
-    fontWeight: "800",
+    fontWeight: '800',
   },
   subtitle: {
     fontSize: 16,
@@ -169,7 +186,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   input: {
     height: 48,
@@ -189,14 +206,14 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   primaryButton: {
     marginTop: 16,
     height: 52,
     borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.primary,
   },
   primaryButtonDisabled: {
@@ -205,10 +222,10 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: colors.primaryText,
     fontSize: 16,
-    fontWeight: "800",
+    fontWeight: '800',
   },
   signInButton: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 8,
   },
   signinText: {
@@ -217,6 +234,25 @@ const styles = StyleSheet.create({
   },
 
   signinTextBold: {
-    fontWeight: "800",
+    fontWeight: '800',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.input,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 48,
+    paddingHorizontal: 12,
+    fontSize: 16,
+  },
+  eyeButton: {
+    paddingHorizontal: 12,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -1,3 +1,5 @@
+import { faHouse, faArrowUp, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 
@@ -20,23 +22,23 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text>,
+          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHouse} size={20} color={color} />,
         }}
       />
-      {/* Index money */}
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Index',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>↑</Text>,
+          title: 'Send',
+          tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faArrowUp} size={20} color={color} />,
         }}
       />
-      {/* Recent Activity */}
       <Tabs.Screen
         name="activity"
         options={{
           title: 'Activity',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🕐</Text>,
+          tabBarIcon: ({ color }) => (
+            <FontAwesomeIcon icon={faClockRotateLeft} size={20} color={color} />
+          ),
         }}
       />
 

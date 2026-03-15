@@ -2,6 +2,13 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View, Text } from 'react-native';
 import { colors } from '@/src/themes/colors';
 import { router } from 'expo-router';
+import {
+  faQrcode,
+  faMagnifyingGlass,
+  faUser,
+  faDeleteLeft,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 export default function Index() {
   const [error, setError] = useState('');
@@ -23,7 +30,7 @@ export default function Index() {
           style={styles.topBarIcon}
           onPress={() => setError('QR code is not yet implemented')}
         >
-          <Text style={styles.topBarEmoji}>⬛</Text>
+          <FontAwesomeIcon icon={faQrcode} size={20} color={colors.bodyText} />
         </Pressable>
 
         <View style={styles.topBarRight}>
@@ -31,11 +38,11 @@ export default function Index() {
             style={styles.topBarIcon}
             onPress={() => setError('Search is not yet implemented')}
           >
-            <Text style={styles.topBarEmoji}>🔍</Text>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
           </Pressable>
 
           <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
-            <Text style={styles.topBarEmoji}>👤</Text>
+            <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>
         </View>
       </View>
@@ -57,7 +64,11 @@ export default function Index() {
       <View style={styles.numberPad}>
         {['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', '⌫'].map((key) => (
           <Pressable key={key} style={styles.numberKey} onPress={() => handleKey(key)}>
-            <Text style={styles.numberKeyText}>{key}</Text>
+            {key === '⌫' ? (
+              <FontAwesomeIcon icon={faDeleteLeft} size={24} color={colors.bodyText} />
+            ) : (
+              <Text style={styles.numberKeyText}>{key}</Text>
+            )}
           </Pressable>
         ))}
       </View>

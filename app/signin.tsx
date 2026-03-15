@@ -11,12 +11,15 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { useSession } from '@/src/context/AuthContext';
 import { colors } from '@/src/themes/colors'; // <-- from the guide
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 export default function SignIn() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const { signIn } = useSession();
 
@@ -79,7 +82,7 @@ export default function SignIn() {
             value={email}
             onChangeText={setEmail}
             placeholder="you@example.com"
-            placeholderTextColor="black"
+            placeholderTextColor={colors.subtitleText}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
@@ -87,17 +90,26 @@ export default function SignIn() {
           />
 
           <Text style={[styles.label, { marginTop: 12 }]}>Password</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder="••••••••"
-            placeholderTextColor="black"
-            secureTextEntry
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={styles.input}
-          />
-
+          <View style={styles.passwordContainer}>
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
+              placeholderTextColor={colors.subtitleText}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="oneTimeCode"
+              style={styles.passwordInput}
+            />
+            <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+              <FontAwesomeIcon
+                icon={showPassword ? faLockOpen : faLock}
+                size={18}
+                color={colors.subtitleText}
+              />
+            </Pressable>
+          </View>
           {error ? (
             <View style={styles.errorBox}>
               <Text style={styles.errorText}>{error}</Text>
@@ -249,4 +261,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.input,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 48,
+    paddingHorizontal: 12,
+    fontSize: 16,
+  },
+  eyeButton: {
+    paddingHorizontal: 12,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eyeText: { fontSize: 18 },
 });

@@ -1,9 +1,21 @@
 import { ScrollView, StyleSheet, View, Pressable, Text } from 'react-native';
 import { colors } from '@/src/themes/colors';
 import { router } from 'expo-router';
+import {
+  faArrowsUpDown,
+  faBell,
+  faBuildingColumns,
+  faCircleCheck,
+  faLock,
+  faRightFromBracket,
+  faShield,
+  faUser,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 type RowProps = {
-  icon: string;
+  icon: IconDefinition;
   label: string;
   onPress: () => void;
   danger?: boolean;
@@ -13,7 +25,9 @@ function Row({ icon, label, onPress, danger }: RowProps) {
   return (
     <Pressable style={styles.row} onPress={onPress}>
       <View style={styles.rowLeft}>
-        <Text style={styles.rowIcon}>{icon}</Text>
+        <View style={styles.rowIconContainer}>
+          <FontAwesomeIcon icon={icon} size={18} color={danger ? colors.error : colors.bodyText} />
+        </View>
         <Text style={[styles.rowLabel, danger && styles.rowLabelDanger]}>{label}</Text>
       </View>
       <Text style={styles.rowChevron}>›</Text>
@@ -44,24 +58,29 @@ export default function Profile() {
       {/* Account Section*/}
       <Text style={styles.sectionTitle}>Account</Text>
       <View style={styles.card}>
-        <Row icon="👤" label="Personal Info" onPress={() => {}} />
+        <Row icon={faUser} label="Personal Info" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="🏦" label="Bank Accounts & Cards" onPress={() => {}} />
+        <Row icon={faBuildingColumns} label="Bank Accounts & Cards" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="↕️" label="Transfer Limits" onPress={() => {}} />
+        <Row icon={faArrowsUpDown} label="Transfer Limits" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="✅" label="Verification" onPress={() => {}} />
+        <Row icon={faCircleCheck} label="Verification" onPress={() => {}} />
       </View>
       {/* Settings Section */}
       <Text style={styles.sectionTitle}>Settings</Text>
       <View style={styles.card}>
-        <Row icon="🔔" label="Notifications" onPress={() => {}} />
+        <Row icon={faBell} label="Notifications" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="🔒" label="Security & PIN" onPress={() => {}} />
+        <Row icon={faShield} label="Security & PIN" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="🛡️" label="Privacy" onPress={() => {}} />
+        <Row icon={faLock} label="Privacy" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon="🚪" label="Log Out" onPress={() => router.replace('/logout')} danger />
+        <Row
+          icon={faRightFromBracket}
+          label="Log Out"
+          onPress={() => router.replace('/logout')}
+          danger
+        />
       </View>
     </ScrollView>
   );
@@ -108,7 +127,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  rowIcon: { fontSize: 20, width: 28, textAlign: 'center' },
+  rowIconContainer: { width: 28, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { fontSize: 16, fontWeight: '500' },
   rowLabelDanger: { color: colors.error },
   rowChevron: { fontSize: 22, color: colors.subtitleText, lineHeight: 24 },
