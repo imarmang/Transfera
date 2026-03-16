@@ -76,7 +76,7 @@ public class AuthController {
         );
 
         Authentication authentication = authenticationManager.authenticate( authToken );
-        String jwt = jwtUtil.generateToken( ( User) authentication.getPrincipal() );
+        String jwt = jwtUtil.generateToken( ( User ) authentication.getPrincipal() );
 
         return ResponseEntity.status(HttpStatus.CREATED ).body( new RegisterResponseDTO( jwt ) );
 
@@ -93,43 +93,41 @@ public class AuthController {
     //  3. Doesn’t survive restart → if the app restarts, all “revoked” tokens become valid again.
     //  4. Doesn’t work in multi-instance deployments (multiple servers) unless you share the blacklist.
     //  Storing just jti solves #1, and using something like Redis with TTL solves #2–#4.
-    @PostMapping("/logout")
-    public ResponseEntity<LogoutResponseDTO> logout(HttpServletRequest request ) {
+    @PostMapping( "/logout" )
+    public ResponseEntity<LogoutResponseDTO> logout( HttpServletRequest request ) {
 
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader( "Authorization" );
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("LOGOUT FAILED: No token provided");
-            return ResponseEntity.badRequest().body(new LogoutResponseDTO("No token provided"));
+        if ( authHeader == null || !authHeader.startsWith( "Bearer " ) ) {
+            System.out.println( "LOGOUT FAILED: No token provided" );
+            return ResponseEntity.badRequest().body( new LogoutResponseDTO( "No token provided" ) );
         }
 
-        String token = authHeader.substring(7);
+        String token = authHeader.substring( 7 );
 
         // TODO: add the token to the blacklist, temporary solution
-        tokenBlacklistService.blacklistToken(token);
+        tokenBlacklistService.blacklistToken( token );
 
-        LogoutResponseDTO resp = new LogoutResponseDTO("Logged out Successfully");
-        System.out.println("Logout response JSON: {\"message\":\"" + resp.message() + "\"}");
+        LogoutResponseDTO resp = new LogoutResponseDTO( "Logged out Successfully" );
+        System.out.println( "Logout response JSON: {\"message\":\"" + resp.message() + "\"}" );
 
-        return ResponseEntity.ok(resp);
+        return ResponseEntity.ok( resp );
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<ForgotPasswordResponseDTO> forgotPassword(@RequestBody ForgotPasswordRequestDTO request ) {
+    @PostMapping( "/forgot-password" )
+    public ResponseEntity<ForgotPasswordResponseDTO> forgotPassword( @RequestBody ForgotPasswordRequestDTO request ) {
         System.out.println( "AuthController: forgot password request for email: " + request.email() );
         ForgotPasswordResponseDTO response = forgotPasswordService.execute( request.email() );
 
         return ResponseEntity.ok( response );
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<ResetPasswordResponseDTO> resetPassword(@RequestBody ResetPasswordRequestDTO request ) {
+    @PostMapping( "/reset-password" )
+    public ResponseEntity<ResetPasswordResponseDTO> resetPassword( @RequestBody ResetPasswordRequestDTO request ) {
         System.out.println( "AuthController: reset password request for token: " + request.token() );
 
         ResetPasswordResponseDTO response = resetPasswordService.execute( request.token(), request.newPassword() );
         return ResponseEntity.ok( response );
 
     }
-
-
 }

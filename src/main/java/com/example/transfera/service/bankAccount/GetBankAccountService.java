@@ -4,7 +4,7 @@ import com.example.transfera.Query;
 import com.example.transfera.domain.bank_account.BankAccount;
 import com.example.transfera.domain.bank_account.BankAccountRepository;
 import com.example.transfera.dto.BankAccountDTO.BankAccountDTO;
-import com.example.transfera.exceptions.BankAccountNotFoundException;
+import com.example.transfera.exceptions.customExceptions.BankAccountNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

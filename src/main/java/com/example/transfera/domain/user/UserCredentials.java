@@ -22,8 +22,19 @@ public class UserCredentials {
     @Column ( name="password", length=300 )
     private String password;
 
+    @Column ( name="auth_provider", nullable = false)
+    private String authProvider;  // "LOCAL" OR "GOOGLE"
+
+    // DEFAULT IS LOCAL
     public UserCredentials(String email, String password ) {
         this.email = email;
         this.password = password;
+        this.authProvider = "LOCAL";
+    }
+
+    public UserCredentials( String email, String password, String authProvider ) {
+        this.email = email;
+        this.password = password;
+        this.authProvider = authProvider;
     }
 }

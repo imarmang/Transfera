@@ -5,7 +5,7 @@ import com.example.transfera.domain.password_reset.PasswordResetToken;
 import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
 import com.example.transfera.dto.AuthDTO.forgotPassword.ForgotPasswordResponseDTO;
-import com.example.transfera.exceptions.UserNotFound;
+import com.example.transfera.exceptions.customExceptions.UserNotFound;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

@@ -3,7 +3,7 @@ package com.example.transfera.service.bankAccount;
 import com.example.transfera.Command;
 import com.example.transfera.domain.bank_account.BankAccount;
 import com.example.transfera.domain.bank_account.BankAccountRepository;
-import com.example.transfera.exceptions.BankAccountNotFoundException;
+import com.example.transfera.exceptions.customExceptions.BankAccountNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

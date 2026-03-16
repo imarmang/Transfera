@@ -1,7 +1,7 @@
 package com.example.transfera.controller;
 
 import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
-import com.example.transfera.exceptions.FeatureNotImplemented;
+import com.example.transfera.exceptions.customExceptions.FeatureNotImplemented;
 import com.example.transfera.service.userCredential.DeleteUserCredentialsService;
 import com.example.transfera.service.userCredential.GetUsersCredentialsService;
 import org.springframework.http.ResponseEntity;

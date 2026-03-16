@@ -11,7 +11,7 @@ import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
 import com.example.transfera.dto.AuthDTO.resetPassword.ResetPasswordResponseDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.example.transfera.exceptions.InvalidResetTokenException;
+import com.example.transfera.exceptions.customExceptions.InvalidResetTokenException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -1,5 +1,6 @@
 package com.example.transfera.exceptions;
 
+import com.example.transfera.exceptions.customExceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,4 +30,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( new ErrorResponse( exception.getMessage() ) );
     }
 
+    @ExceptionHandler( GoogleAuthException.class )
+    public ResponseEntity<ErrorResponse> handleGoogleAuthException( GoogleAuthException exception ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( new ErrorResponse( exception.getMessage() ) );
+    }
 }

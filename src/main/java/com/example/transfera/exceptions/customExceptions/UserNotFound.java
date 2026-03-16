@@ -1,4 +1,6 @@
-package com.example.transfera.exceptions;
+package com.example.transfera.exceptions.customExceptions;
+
+import com.example.transfera.exceptions.ErrorMessages;
 
 public class UserNotFound extends RuntimeException {
     public UserNotFound() {
