@@ -13,6 +13,9 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useSession } from '@/src/context/AuthContext';
+import { useState, useEffect } from 'react';
+import { getProfileDataRequest, ProfileData } from '@/src/services/profile.service';
 
 type RowProps = {
   icon: IconDefinition;
@@ -36,6 +39,14 @@ function Row({ icon, label, onPress, danger }: RowProps) {
 }
 
 export default function Profile() {
+  const { session } = useSession();
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+
+  useEffect(() => {
+    if (!session) return;
+    getProfileDataRequest(session).then(setProfile).catch(console.error);
+  }, [session]);
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
@@ -45,13 +56,18 @@ export default function Profile() {
         <Text style={styles.headerTitle}>Profile</Text>
         <View style={{ width: 40 }} />
       </View>
+
       {/* Avatar Section */}
       <View style={styles.avatarSection}>
         <View style={styles.avatarCircle}>
-          <Text style={styles.avatarInitials}>JD</Text>
+          <Text style={styles.avatarInitials}>
+            {profile ? `${profile.firstName[0]}${profile.lastName[0]}` : '??'}
+          </Text>
         </View>
-        <Text style={styles.userName}>John Doe</Text>
-        <Text style={styles.userHandle}>$johndoe</Text>
+        <Text style={styles.userName}>
+          {profile ? `${profile.firstName} ${profile.lastName}` : ''}
+        </Text>
+        <Text style={styles.userHandle}>{profile ? `$${profile.username}` : ''}</Text>
       </View>
       {/*  End of Avatar Section  */}
 
@@ -66,6 +82,8 @@ export default function Profile() {
         <View style={styles.separator} />
         <Row icon={faCircleCheck} label="Verification" onPress={() => {}} />
       </View>
+      {/* End Account Section*/}
+
       {/* Settings Section */}
       <Text style={styles.sectionTitle}>Settings</Text>
       <View style={styles.card}>
@@ -82,6 +100,7 @@ export default function Profile() {
           danger
         />
       </View>
+      {/* End Settings Section */}
     </ScrollView>
   );
 }
