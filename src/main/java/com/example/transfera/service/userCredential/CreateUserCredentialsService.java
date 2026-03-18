@@ -25,10 +25,15 @@ public class CreateUserCredentialsService implements Command<CreateUserRequestDT
     @Override
     public ResponseEntity<UserCredentialsResponseDTO> execute( CreateUserRequestDTO request ) {
 
+        if ( request.getPassword() == null || request.getPassword().isBlank() ) {
+            return ResponseEntity.status( HttpStatus.BAD_REQUEST ).build();
+        }
+
         // Check if the email already exists
         if ( userCredentialsRepository.existsByEmail( request.getEmail() ) ) {
             return ResponseEntity.status( HttpStatus.CONFLICT ).build();
         }
+
         // Hash the password before saving
         UserCredentials savedUserCredentials = userCredentialsRepository.save(
                 new UserCredentials( request.getEmail(), passwordEncoder.encode( request.getPassword() ) )

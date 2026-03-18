@@ -19,7 +19,7 @@ public class UserCredentials {
     @Column ( name="email", length=100, unique = true, nullable = false )
     private String email;
 
-    @Column ( name="password", length=300 )
+    @Column ( name="password", length=300, nullable = true )
     private String password;
 
     @Column ( name="auth_provider", nullable = false)

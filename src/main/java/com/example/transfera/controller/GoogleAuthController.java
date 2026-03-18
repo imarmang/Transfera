@@ -21,4 +21,11 @@ public class GoogleAuthController {
         GoogleAuthResponseDTO response = googleAuthService.execute( googleAuthRequestDTO );
         return ResponseEntity.ok( response );
     }
+
+    @PostMapping("/google/register")
+    public ResponseEntity<GoogleAuthResponseDTO> googleRegister( @RequestBody GoogleAuthRequestDTO googleAuthRequestDTO ) {
+        System.out.println( "GoogleAuthController: googleRegister: Received google register request" );
+        GoogleAuthResponseDTO response = googleAuthService.register( googleAuthRequestDTO );
+        return ResponseEntity.ok( response );
+    }
 }

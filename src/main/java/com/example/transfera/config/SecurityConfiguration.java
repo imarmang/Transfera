@@ -60,6 +60,7 @@ public class SecurityConfiguration {
                             "/auth/forgot-password",
                             "/auth/reset-password",
                             "/auth2/google",
+                            "/auth2/google/register",
 
                             // USED IN SWAGGER
                             "/swagger-ui/**",
