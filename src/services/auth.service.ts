@@ -34,6 +34,7 @@ export async function registerRequest(email: string, password: string): Promise<
   return data.token;
 }
 
+// user logs out
 export async function logoutRequest(token: string): Promise<string> {
   const res = await fetch(`${API_BASE}/auth/logout`, {
     method: 'POST',
@@ -49,6 +50,7 @@ export async function logoutRequest(token: string): Promise<string> {
   return data.message;
 }
 
+// check if the user has a profile
 export async function getProfileRequest(token: string): Promise<boolean> {
   const res = await fetch(`${API_BASE}/api/v1/profiles/me`, {
     method: 'GET',
@@ -62,6 +64,7 @@ export async function getProfileRequest(token: string): Promise<boolean> {
   throw new Error('Failed to load the profile');
 }
 
+// create a user profile
 export async function createProfileRequest(
   token: string,
   userName: string,
@@ -89,6 +92,7 @@ export async function createProfileRequest(
   }
 }
 
+// sending a request to change the user password
 export async function forgotPasswordRequest(email: string): Promise<string> {
   const res = await fetch(`${API_BASE}/auth/forgot-password`, {
     method: 'POST',
@@ -104,4 +108,33 @@ export async function forgotPasswordRequest(email: string): Promise<string> {
     );
 
   return data.message;
+}
+
+export async function googleAuthRequest(idToken: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/auth2/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data?.message ?? 'Google sign-in failed');
+  if (!data.token) throw new Error('No token returned from the server');
+  return data.token;
+}
+
+export async function googleRegisterRequest(idToken: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/auth2/google/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+
+  if (res.status === 409) throw new Error('Account already exists. Please sign in.');
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data?.message ?? 'Google sign-up failed');
+  if (!data.token) throw new Error('No token returned from the server');
+  return data.token;
 }
