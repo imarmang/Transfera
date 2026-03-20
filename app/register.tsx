@@ -24,7 +24,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signUp, signUpWithGoogle } = useSession();
@@ -39,7 +40,7 @@ export default function Register() {
   async function onGoogleRegister() {
     setError('');
     try {
-      setLoading(true);
+      setLoadingGoogle(true);
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.data?.idToken;
@@ -50,7 +51,7 @@ export default function Register() {
       console.log('googleRegister error:', e);
       setError('Google Sign-up failed. Please try again.');
     } finally {
-      setLoading(false);
+      setLoadingGoogle(false);
     }
   }
 
@@ -73,13 +74,13 @@ export default function Register() {
     }
 
     try {
-      setLoading(true);
+      setLoadingEmail(true);
       await signUp(email, password);
       router.replace('/');
     } catch {
       setError('Registration failed. That email may be already in use.');
     } finally {
-      setLoading(false);
+      setLoadingEmail(false);
     }
   }
 
@@ -161,12 +162,12 @@ export default function Register() {
               </View>
             ) : null}
             <Pressable
-              style={[styles.primaryButton, loading && styles.primaryButtonDisabled]}
+              style={[styles.primaryButton, loadingEmail && styles.primaryButtonDisabled]}
               onPress={onRegister}
-              disabled={loading}
+              disabled={loadingEmail}
             >
               <Text style={styles.primaryButtonText}>
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loadingEmail ? 'Creating account...' : 'Create Account'}
               </Text>
             </Pressable>
           </View>
@@ -177,13 +178,12 @@ export default function Register() {
           </View>
 
           <Pressable
-            // onPress={(onGoogleRegister)}
             onPress={onGoogleRegister}
-            disabled={loading}
+            disabled={loadingGoogle}
             style={({ pressed }) => [
               styles.googleButton,
               pressed && styles.googleButtonPressed,
-              loading && styles.googleButtonDisabled,
+              loadingGoogle && styles.googleButtonDisabled,
             ]}
           >
             <View style={styles.googleButtonContent}>
@@ -207,7 +207,7 @@ export default function Register() {
                 <Path fill="none" d="M0 0h48v48H0z" />
               </Svg>
               <Text style={styles.googleButtonText}>
-                {loading ? 'Creating account...' : 'Sign up with Google'}
+                {loadingGoogle ? 'Creating account...' : 'Sign up with Google'}
               </Text>
             </View>
           </Pressable>

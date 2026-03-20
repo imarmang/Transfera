@@ -19,10 +19,13 @@ import Svg, { Path } from 'react-native-svg';
 
 export default function SignIn() {
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+
   const { signIn, signInWithGoogle } = useSession();
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function SignIn() {
     }
 
     try {
-      setLoading(true);
+      setLoadingEmail(true);
       console.log('Calling signIn...');
       await signIn(email, password);
       console.log('signIn successful, navigating to /register');
@@ -53,7 +56,7 @@ export default function SignIn() {
       console.log('signIn error:', e);
       setError('Login failed. Check your email and password.');
     } finally {
-      setLoading(false);
+      setLoadingEmail(false);
     }
   }
 
@@ -61,7 +64,7 @@ export default function SignIn() {
     setError('');
 
     try {
-      setLoading(true);
+      setLoadingGoogle(true);
       console.log('Calling the onGoogleSignIn...');
 
       // Disables the button and shows a loading state so the user knows something is happening.
@@ -82,7 +85,7 @@ export default function SignIn() {
         setError('Login failed. Check your network.');
       }
     } finally {
-      setLoading(false);
+      setLoadingGoogle(false);
     }
   }
 
@@ -137,11 +140,13 @@ export default function SignIn() {
             </View>
           ) : null}
           <Pressable
-            style={[styles.primaryButton, loading && styles.primaryButtonDisabled]}
+            style={[styles.primaryButton, loadingEmail && styles.primaryButtonDisabled]}
             onPress={onSignIn}
-            disabled={loading}
+            disabled={loadingEmail}
           >
-            <Text style={styles.primaryButtonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
+            <Text style={styles.primaryButtonText}>
+              {loadingEmail ? 'Signing in...' : 'Sign in'}
+            </Text>
           </Pressable>
 
           <Pressable onPress={() => router.push('/forgot_password')} style={styles.linkButton}>
@@ -157,11 +162,11 @@ export default function SignIn() {
 
         <Pressable
           onPress={onGoogleSignIn}
-          disabled={loading}
+          disabled={loadingGoogle}
           style={({ pressed }) => [
             styles.googleButton,
             pressed && styles.googleButtonPressed,
-            loading && styles.googleButtonDisabled,
+            loadingGoogle && styles.googleButtonDisabled,
           ]}
         >
           <View style={styles.googleButtonContent}>
@@ -185,7 +190,7 @@ export default function SignIn() {
               <Path fill="none" d="M0 0h48v48H0z" />
             </Svg>
             <Text style={styles.googleButtonText}>
-              {loading ? 'Signing in...' : 'Continue with Google'}
+              {loadingGoogle ? 'Signing in...' : 'Continue with Google'}
             </Text>
           </View>
         </Pressable>
