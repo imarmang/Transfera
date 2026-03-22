@@ -7,6 +7,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+// TODO: change bank account to Transfera Wallet
+
 // bank account entity, which holds the account number, balance,
 // there is a one-to-one relationship between the user and the account
 @Entity

@@ -41,13 +41,9 @@ public class BankController {
     }
 
     @PostMapping( "/account" )
-    public ResponseEntity<BankAccountDTO> createProduct( @RequestBody BankAccount bankAccount ) {
+    public ResponseEntity<BankAccountDTO> createBankAccount(@RequestBody BankAccount bankAccount ) {
         return createBankAccountService.execute( bankAccount );
     }
-
-//    FUTURE IMPLEMENTATION IF I ADD CATEGORIES
-//    @GetMapping( "account/search" )
-//    public ResponseEntity<List<BankAccountDTO>> searchAccountByName( @RequestParam String name ) {}
 
     @PutMapping( "/account/{id}" )
     public ResponseEntity<BankAccountDTO> updateBankAccount( @PathVariable UUID id, @RequestBody BankAccount bankAccount ) {

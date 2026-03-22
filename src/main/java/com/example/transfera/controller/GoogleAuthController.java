@@ -6,7 +6,6 @@ import com.example.transfera.service.google.GoogleAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*")
 @RequestMapping("/auth2")
 @RestController
 public class GoogleAuthController {

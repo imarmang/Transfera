@@ -32,17 +32,21 @@ public class GoogleAuthService {
         this.jwtUtil = jwtUtil;
     }
 
+    private GoogleIdTokenVerifier buildVerifier() {
+        return new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(),
+                new GsonFactory()
+        ).setAudience(Collections.singletonList(googleClientId))
+                .build();
+    }
+
     // Checks if a user email is already registered in the system so if not return a user not found error and direct the user to register
     public GoogleAuthResponseDTO execute( GoogleAuthRequestDTO googleAuthRequestDTO ) {
         System.out.println( "GoogleAuthService: Verifying Google ID token" );
 
         try {
             // 1. Build the verifier using my credentials
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(),
-                    new GsonFactory()
-            ).setAudience(Collections.singletonList(googleClientId))
-                    .build();
+            GoogleIdTokenVerifier verifier =  buildVerifier();
 
             // 2. Verify the ID token sent
             GoogleIdToken idToken = verifier.verify( googleAuthRequestDTO.idToken() );
@@ -81,11 +85,7 @@ public class GoogleAuthService {
 
         try {
             // 1. Build the verifier using my credentials
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(),
-                    new GsonFactory()
-            ).setAudience(Collections.singletonList(googleClientId))
-                    .build();
+            GoogleIdTokenVerifier verifier = buildVerifier();
 
             GoogleIdToken idToken = verifier.verify( googleAuthRequestDTO.idToken() );
 
@@ -99,7 +99,7 @@ public class GoogleAuthService {
             System.out.println( "GoogleAuthService: Token verified for email " + email );
 
             if ( userCredentialsRepository.existsByEmail( email ) ) {
-                throw new RuntimeException( "Account already exists. Please sing in." );
+                throw new RuntimeException( "Account already exists. Please sign in." );
             }
 
             UserCredentials userCredentials = new UserCredentials( email, null, "GOOGLE" );

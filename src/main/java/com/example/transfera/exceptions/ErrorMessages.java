@@ -8,7 +8,8 @@ public enum ErrorMessages {
     USER_NOT_FOUND( "User not found" ),
     FEATURE_NOT_IMPLEMENTED( "This feature is not yet available" ),
     INVALID_RESET_TOKEN_EXCEPTION( "Invalid or expired reset token" ),
-    GOOGLE_AUTH_FAILED( "Google authentication failed" );
+    GOOGLE_AUTH_FAILED( "Google authentication failed" ),
+    LINKED_ACCOUNT_EXISTS( "This bank information is already linked to your account" );
 //    INSUFFICIENT_FUNDS("Insufficient funds"),
 //    ACCOUNT_NUMBER_REQUIRED("Account number is required");
 

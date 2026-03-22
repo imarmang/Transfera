@@ -34,4 +34,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGoogleAuthException( GoogleAuthException exception ) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( new ErrorResponse( exception.getMessage() ) );
     }
+
+    @ExceptionHandler( LinkedBankAccountExists.class )
+    public ResponseEntity<ErrorResponse> handleLinkedBankAccountExists( LinkedBankAccountExists exception ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body( new ErrorResponse( exception.getMessage() ) );
+    }
 }

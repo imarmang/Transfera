@@ -25,7 +25,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin( origins = "*" )
 @RequestMapping("/auth")
 public class AuthController {
 
