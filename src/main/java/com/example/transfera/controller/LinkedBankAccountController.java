@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/linked-bank-account")
@@ -38,9 +39,10 @@ public class LinkedBankAccountController {
         return getLinkedBankAccountService.execute( null );
     }
 
+    // TODO add this option
     // DELETE the user's linked bank account
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLinkedBankAccount() {
+    public ResponseEntity<Void> deleteLinkedBankAccount( @PathVariable UUID id ) {
         return null;
     }
 }
