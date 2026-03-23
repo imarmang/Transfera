@@ -149,7 +149,7 @@ export default function SignIn() {
             </Text>
           </Pressable>
 
-          <Pressable onPress={() => router.push('/forgot_password')} style={styles.linkButton}>
+          <Pressable onPress={() => router.push('/forgot-password')} style={styles.linkButton}>
             <Text style={styles.linkText}>Forgot your password?</Text>
           </Pressable>
         </View>

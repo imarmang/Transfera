@@ -76,7 +76,11 @@ export default function Profile() {
       <View style={styles.card}>
         <Row icon={faUser} label="Personal Info" onPress={() => {}} />
         <View style={styles.separator} />
-        <Row icon={faBuildingColumns} label="Bank Accounts & Cards" onPress={() => {}} />
+        <Row
+          icon={faBuildingColumns}
+          label="Bank Accounts & Cards"
+          onPress={() => router.push('/profile/linked-bank-accounts')}
+        />
         <View style={styles.separator} />
         <Row icon={faArrowsUpDown} label="Transfer Limits" onPress={() => {}} />
         <View style={styles.separator} />
