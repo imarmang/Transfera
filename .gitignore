@@ -2,6 +2,7 @@
 
 /.vscode
 /.idea
+
 # dependencies
 node_modules/
 
@@ -35,6 +36,7 @@ yarn-error.*
 # local env files
 .env*.local
 .env
+.env.*
 
 # typescript
 *.tsbuildinfo
@@ -42,5 +44,54 @@ yarn-error.*
 app-example
 
 # generated native folders
-/ios
-/android
+ios/
+android/
+frontend/ios/
+frontend/android/
+frontend/.gitignore
+
+# Backend
+HELP.md
+.gradle
+build/
+backend/.gradle/
+backend/build/
+backend/src/main/resources/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application.yml
