@@ -46,8 +46,8 @@ public class CreateLinkedBankAccountService implements Command<CreateLinkedBankA
         LinkedBankAccount newAccount = new LinkedBankAccount(
                 userCredentials,
                 request.bankName(),
-                request.accountNumber(),
                 request.accountHolderName(),
+                request.accountNumber(),
                 request.routingNumber(),
                 request.accountType()
         );
