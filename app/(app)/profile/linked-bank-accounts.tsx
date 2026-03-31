@@ -1,15 +1,42 @@
 import { View, StyleSheet, Pressable, Text, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBuilding, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { colors } from '@/src/themes/colors';
-import { useState } from 'react';
-import { LinkedBankAccountDTO } from '@/src/services/linked-account.service';
+import { useEffect, useState } from 'react';
+import {
+  getLinkedBankAccountRequest,
+  LinkedBankAccountDTO,
+} from '@/src/services/linked-account.service';
 import LinkBankAccountModal from './link-account-modal';
+import { useSession } from '@/src/context/AuthContext';
 
 export default function LinkedBankAccounts() {
   const [showModal, setShowModal] = useState(false);
   const [accounts, setAccounts] = useState<LinkedBankAccountDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const { session } = useSession();
+
+  async function fetchAccounts() {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await getLinkedBankAccountRequest(session!);
+      console.log('accounts:', JSON.stringify(data));
+
+      setAccounts(data);
+    } catch (e: any) {
+      setError(e.message ?? 'Failed to load linked accounts.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -22,6 +49,30 @@ export default function LinkedBankAccounts() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Error fetching the linked bank accounts*/}
+        {error ? (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
+
+        {/* Fetched linked bank accounts */}
+        {accounts.map((account) => (
+          <View key={account.id} style={styles.linkRow}>
+            <View style={styles.linkIconContainer}>
+              <FontAwesomeIcon icon={faBuilding} />
+            </View>
+            <View style={styles.linkInfo}>
+              <Text style={styles.linkTitle}>{account.bankName}</Text>
+              <Text style={styles.linkSubtitle}>
+                {account.accountHolderName} • {account.accountType} •{' '}
+                {account.lastFourDigitsAccountNumber}
+              </Text>
+            </View>
+          </View>
+        ))}
+
+        {/* Link a new bank account */}
         <Pressable style={styles.linkRow} onPress={() => setShowModal(true)}>
           <View style={styles.linkIconContainer}>
             <FontAwesomeIcon icon={faPlus} size={18} color={colors.bodyText} />
@@ -88,4 +139,14 @@ const styles = StyleSheet.create({
   linkTitle: { fontSize: 16, fontWeight: '700' },
   linkSubtitle: { fontSize: 14, color: colors.subtitleText, marginTop: 2 },
   chevron: { fontSize: 28, color: colors.subtitleText, lineHeight: 32, alignSelf: 'center' },
+  errorBox: {
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: colors.errorBackground,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 14,
+    fontWeight: '600',
+  },
 });

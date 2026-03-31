@@ -4,12 +4,12 @@ export type LinkedBankAccountDTO = {
   id: string;
   bankName: string;
   accountHolderName: string;
-  lastFourDigits: string;
+  lastFourDigitsAccountNumber: string;
   routingNumber: string;
   accountType: string;
 };
 
-export type CreateLinkedBankAccountRequstDTO = {
+export type CreateLinkedBankAccountRequestDTO = {
   bankName: string;
   accountHolderName: string;
   accountNumber: string;
@@ -33,7 +33,7 @@ export async function getLinkedBankAccountRequest(token: string): Promise<Linked
 // Link a bank account
 export async function createLinkedAccountRequest(
   token: string,
-  request: CreateLinkedBankAccountRequstDTO
+  request: CreateLinkedBankAccountRequestDTO
 ): Promise<LinkedBankAccountDTO> {
   const res = await fetch(`${API_BASE}/api/v1/linked-bank-account`, {
     method: 'POST',
