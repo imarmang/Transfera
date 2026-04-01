@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BankAccountNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProductNotFoundException(BankAccountNotFoundException exception) {
+    @ExceptionHandler(TransferaWalletNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductNotFoundException(TransferaWalletNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body( new ErrorResponse(exception.getMessage() ) );
     }
 

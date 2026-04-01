@@ -1,12 +1,39 @@
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/src/themes/colors';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { getTransferaWalletRequest, TransferaWalletDTO } from '@/src/services/wallet.service';
+import { useSession } from '@/src/context/AuthContext';
 
 export default function Home() {
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [wallet, setWallet] = useState<TransferaWalletDTO | null>(null);
+  const { session } = useSession()
+
+  async function fetchWallet() {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await getTransferaWalletRequest(session!);
+      console.log('wallet:', JSON.stringify(data));
+      setWallet(data);
+    }
+    catch(e: any) {
+      setError(e.message ?? 'Failed to load wallet.');
+    }
+    finally{
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
+
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
@@ -31,7 +58,7 @@ export default function Home() {
       {/* Balance Card */}
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Transfera Balance</Text>
-        <Text style={styles.balanceAmount}>$1,000.00</Text>
+        <Text style={styles.balanceAmount}>{loading ? '...': `$${wallet?.balance.toFixed(2) ?? '0.00'}`}</Text>
         <View style={styles.balanceAction}>
           <Pressable
             style={styles.balanceButton}

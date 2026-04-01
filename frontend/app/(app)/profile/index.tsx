@@ -39,8 +39,8 @@ function Row({ icon, label, onPress, danger }: RowProps) {
 }
 
 export default function Profile() {
-  const { session } = useSession();
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const { session, signOut } = useSession();
 
   useEffect(() => {
     if (!session) return;
@@ -100,7 +100,7 @@ export default function Profile() {
         <Row
           icon={faRightFromBracket}
           label="Log Out"
-          onPress={() => router.replace('/logout')}
+          onPress={signOut}
           danger
         />
       </View>

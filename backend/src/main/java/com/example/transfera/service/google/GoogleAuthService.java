@@ -7,6 +7,7 @@ import com.example.transfera.dto.AuthDTO.google.GoogleAuthResponseDTO;
 import com.example.transfera.exceptions.customExceptions.GoogleAuthException;
 import com.example.transfera.exceptions.customExceptions.UserNotFound;
 import com.example.transfera.security.jwt.JwtUtil;
+import com.example.transfera.service.transferaWallet.CreateTransferaWalletService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -23,13 +24,15 @@ public class GoogleAuthService {
 
     private final UserCredentialsRepository userCredentialsRepository;
     private final JwtUtil jwtUtil;
+    private final CreateTransferaWalletService createTransferaWalletService;
 
     @Value("${google.client.id}")
     private String googleClientId;
 
-    public GoogleAuthService(UserCredentialsRepository userCredentialsRepository, JwtUtil jwtUtil) {
+    public GoogleAuthService(UserCredentialsRepository userCredentialsRepository, JwtUtil jwtUtil, CreateTransferaWalletService createTransferaWalletService) {
         this.userCredentialsRepository = userCredentialsRepository;
         this.jwtUtil = jwtUtil;
+        this.createTransferaWalletService = createTransferaWalletService;
     }
 
     private GoogleIdTokenVerifier buildVerifier() {
@@ -104,6 +107,8 @@ public class GoogleAuthService {
 
             UserCredentials userCredentials = new UserCredentials( email, null, "GOOGLE" );
             userCredentialsRepository.save( userCredentials );
+
+            createTransferaWalletService.execute( userCredentials );
 
             User jwtUser = new User( userCredentials.getEmail(), "", List.of() );
 

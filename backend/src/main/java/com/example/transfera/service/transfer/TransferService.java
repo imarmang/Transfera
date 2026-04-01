@@ -1,8 +1,8 @@
 //package com.example.transfera.service.transfer;
 //
 //import com.example.transfera.Command;
-//import com.example.transfera.domain.account.BankAccount;
-//import com.example.transfera.domain.account.BankAccountRepository;
+//import com.example.transfera.domain.account.TransferaWallet;
+//import com.example.transfera.domain.account.TransferaWalletRepository;
 //import com.example.transfera.dto.TransferDTO;
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@
 //@Transactional
 //public class TransferService implements Command<TransferDTO, String> {
 //
-//    private final BankAccountRepository bankAccountRepository;
+//    private final TransferaWalletRepository bankAccountRepository;
 //
-//    public TransferService( BankAccountRepository bankAccountRepository ) {
+//    public TransferService( TransferaWalletRepository bankAccountRepository ) {
 //        this.bankAccountRepository = bankAccountRepository;
 //    }
 //
@@ -24,14 +24,14 @@
 //    @Override
 //    public ResponseEntity<String> execute( TransferDTO transfer ) {
 //
-//        Optional<BankAccount> fromAccount = bankAccountRepository.findById( transfer.getFromUser() );
-//        Optional<BankAccount> toAccount = bankAccountRepository.findById( transfer.getToUser() );
+//        Optional<TransferaWallet> fromAccount = bankAccountRepository.findById( transfer.getFromUser() );
+//        Optional<TransferaWallet> toAccount = bankAccountRepository.findById( transfer.getToUser() );
 //
 //        if ( fromAccount.isEmpty() || toAccount.isEmpty() ) {
 //            throw new RuntimeException( "User is not empty" );
 //        }
-//        BankAccount from = fromAccount.get();
-//        BankAccount to = toAccount.get();
+//        TransferaWallet from = fromAccount.get();
+//        TransferaWallet to = toAccount.get();
 //
 //        // add & subtract
 //        add( to, transfer.getAmount() );
@@ -45,7 +45,7 @@
 //
 //    }
 //
-//    private void deduct( BankAccount bankAccount, double amount ) {
+//    private void deduct( TransferaWallet bankAccount, double amount ) {
 //        if ( bankAccount.getBalance() < amount ) {
 //            throw new RuntimeException( "Not Enough Money" );
 //        }
@@ -53,7 +53,7 @@
 //        bankAccount.setBalance( bankAccount.getBalance() - amount );
 //    }
 //
-//    private void add( BankAccount bankAccount, double amount ) {
+//    private void add( TransferaWallet bankAccount, double amount ) {
 //        bankAccount.setBalance( bankAccount.getBalance() + amount );
 //    }
 //}

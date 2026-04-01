@@ -41,14 +41,6 @@ export default function TabsLayout() {
           ),
         }}
       />
-
-      {/*  Log out */}
-      <Tabs.Screen
-        name="logout"
-        options={{
-          href: null,
-        }}
-      />
     </Tabs>
   );
 }
