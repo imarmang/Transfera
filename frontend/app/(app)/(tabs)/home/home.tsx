@@ -6,11 +6,13 @@ import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { getTransferaWalletRequest, TransferaWalletDTO } from '@/src/services/wallet.service';
 import { useSession } from '@/src/context/AuthContext';
+import AddMoneyModal from './add-money-modal';
 
 export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [wallet, setWallet] = useState<TransferaWalletDTO | null>(null);
+  const [showAddMoney, setShowAddMoney] = useState(false);
   const { session } = useSession()
 
   async function fetchWallet() {
@@ -62,7 +64,7 @@ export default function Home() {
         <View style={styles.balanceAction}>
           <Pressable
             style={styles.balanceButton}
-            onPress={() => setError('Add money is not yet implemented')}
+            onPress={() => setShowAddMoney(true)}
           >
             <Text style={styles.balanceButtonText}>Add Money</Text>
           </Pressable>
@@ -81,6 +83,8 @@ export default function Home() {
           <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : null}
+
+      {/*<AddMoneyModal visible={showAddMoney} onClose={() => setShowAddMoney(false)} onContinue={(amount: number) => {}} />*/}
     </ScrollView>
   );
 }

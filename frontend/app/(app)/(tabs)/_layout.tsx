@@ -1,7 +1,6 @@
 import { faHouse, faArrowUp, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
 
 export default function TabsLayout() {
   return (
@@ -17,13 +16,26 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: 'rgba(255,255,255,0.4)',
       }}
     >
+
       {/* Home Page */}
       <Tabs.Screen
-        name="home"
+        name="home/home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHouse} size={20} color={color} />,
         }}
+      />
+
+      {/* Add Money Modal */}
+      <Tabs.Screen
+        name="home/add-money-modal"
+        options={{ href: null }}
+      />
+
+      {/* Route the user to link their account */}
+      <Tabs.Screen
+        name="home/no-linked-account-modal"
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="index"
