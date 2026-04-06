@@ -55,7 +55,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests( authorize -> {
                     authorize.requestMatchers(
                             "/auth/login",
-                            "/auth/logout",
                             "/auth/register",
                             "/auth/forgot-password",
                             "/auth/reset-password",

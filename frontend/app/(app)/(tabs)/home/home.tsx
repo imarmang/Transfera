@@ -1,48 +1,66 @@
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/src/themes/colors';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { getTransferaWalletRequest, TransferaWalletDTO } from '@/src/services/wallet.service';
 import { useSession } from '@/src/context/AuthContext';
 import AddMoneyModal from './add-money-modal';
+import { useCustomAmount } from '@/src/context/CustomAmountContext';
+import { getLinkedBankAccountRequest } from '@/src/services/linked-account.service';
 
 export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [wallet, setWallet] = useState<TransferaWalletDTO | null>(null);
   const [showAddMoney, setShowAddMoney] = useState(false);
-  const { session } = useSession()
+
+  const { session } = useSession();
+  const { confirmedAmount, setHasLinkedAccount } = useCustomAmount();
 
   async function fetchWallet() {
     setLoading(true);
     setError('');
     try {
       const data = await getTransferaWalletRequest(session!);
-      console.log('wallet:', JSON.stringify(data));
       setWallet(data);
-    }
-    catch(e: any) {
+    } catch (e: any) {
       setError(e.message ?? 'Failed to load wallet.');
-    }
-    finally{
+    } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchLinkedAccounts() {
+    try {
+      const accounts = await getLinkedBankAccountRequest(session!);
+      setHasLinkedAccount(accounts.length > 0);
+    } catch {
+      setHasLinkedAccount(false);
     }
   }
 
   useEffect(() => {
     fetchWallet();
+    fetchLinkedAccounts();
   }, []);
 
+  // Reopen modal if returning from CustomAmountScreen with a confirmed amount.
+  // Also re-fetch linked accounts in case user just linked one.
+  useFocusEffect(
+    useCallback(() => {
+      fetchLinkedAccounts();
+      if (confirmedAmount !== null) {
+        setShowAddMoney(true);
+      }
+    }, [confirmedAmount])
+  );
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>Money</Text>
-        </View>
-
+        <Text style={styles.headerTitle}>Money</Text>
         <View style={styles.topBarRight}>
           <Pressable
             style={styles.topBarIcon}
@@ -50,7 +68,6 @@ export default function Home() {
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
           </Pressable>
-
           <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
             <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>
@@ -60,12 +77,11 @@ export default function Home() {
       {/* Balance Card */}
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Transfera Balance</Text>
-        <Text style={styles.balanceAmount}>{loading ? '...': `$${wallet?.balance.toFixed(2) ?? '0.00'}`}</Text>
+        <Text style={styles.balanceAmount}>
+          {loading ? '...' : `$${wallet?.balance.toFixed(2) ?? '0.00'}`}
+        </Text>
         <View style={styles.balanceAction}>
-          <Pressable
-            style={styles.balanceButton}
-            onPress={() => setShowAddMoney(true)}
-          >
+          <Pressable style={styles.balanceButton} onPress={() => setShowAddMoney(true)}>
             <Text style={styles.balanceButtonText}>Add Money</Text>
           </Pressable>
           <Pressable
@@ -76,15 +92,18 @@ export default function Home() {
           </Pressable>
         </View>
       </View>
-      {/* End Balance Card*/}
 
-      {error ? (
+      {!!error && (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
-      ) : null}
+      )}
 
-      {/*<AddMoneyModal visible={showAddMoney} onClose={() => setShowAddMoney(false)} onContinue={(amount: number) => {}} />*/}
+      <AddMoneyModal
+        visible={showAddMoney}
+        onClose={() => setShowAddMoney(false)}
+        onContinue={(amount: number) => {}}
+      />
     </ScrollView>
   );
 }
@@ -96,26 +115,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  headerTitle: { fontSize: 28, fontWeight: '800' },
-
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.bodyText },
   scroll: { flex: 1, backgroundColor: colors.background },
   scrollContent: { padding: 20, paddingTop: 60, gap: 12 },
-
   balanceCard: {
     borderRadius: 18,
     padding: 24,
     backgroundColor: '#1A1A1A',
     gap: 8,
   },
-  balanceLabel: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 14,
-  },
-  balanceAmount: {
-    color: 'white',
-    fontSize: 36,
-    fontWeight: '800',
-  },
+  balanceLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 14 },
+  balanceAmount: { color: 'white', fontSize: 36, fontWeight: '800' },
   balanceAction: { flexDirection: 'row', gap: 10, marginTop: 12 },
   balanceButton: {
     flex: 1,
@@ -125,23 +135,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-  balanceButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
+  balanceButtonText: { color: 'white', fontSize: 14, fontWeight: '600' },
   errorBox: {
     padding: 12,
     borderRadius: 10,
     backgroundColor: colors.errorBackground,
   },
-  errorText: {
-    color: colors.error,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-
+  errorText: { color: colors.error, fontSize: 14, fontWeight: '600' },
   topBarIcon: {
     width: 44,
     height: 44,
@@ -150,6 +150,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  topBarEmoji: { fontSize: 22 },
   topBarRight: { flexDirection: 'row', gap: 8 },
 });

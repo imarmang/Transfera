@@ -17,26 +17,14 @@ export default function TabsLayout() {
       }}
     >
 
-      {/* Home Page */}
       <Tabs.Screen
-        name="home/home"
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHouse} size={20} color={color} />,
         }}
       />
 
-      {/* Add Money Modal */}
-      <Tabs.Screen
-        name="home/add-money-modal"
-        options={{ href: null }}
-      />
-
-      {/* Route the user to link their account */}
-      <Tabs.Screen
-        name="home/no-linked-account-modal"
-        options={{ href: null }}
-      />
       <Tabs.Screen
         name="index"
         options={{
