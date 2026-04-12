@@ -28,7 +28,7 @@ export type AddMoneyRequestDTO = {
 // Add Money to the user's current balance that is on their Transfera account
 export async function addMoneyTransferaWalletRequest( token: string, body: AddMoneyRequestDTO ): Promise<void> {
 
-  const res = await fetch(`${API_BASE}/api/v1/add-money`, {
+  const res = await fetch(`${API_BASE}/api/v1/transfera-wallet/add-money`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

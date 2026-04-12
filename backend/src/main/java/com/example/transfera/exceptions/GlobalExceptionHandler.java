@@ -39,4 +39,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleLinkedBankAccountExists( LinkedBankAccountExists exception ) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body( new ErrorResponse( exception.getMessage() ) );
     }
+
+    @ExceptionHandler( LinkedBankAccountNotFoundException.class )
+    public ResponseEntity<ErrorResponse> handleLinkedBankAccountNotFoundException( LinkedBankAccountNotFoundException exception ) {
+        return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( new ErrorResponse( exception.getMessage() ) );
+    }
 }
