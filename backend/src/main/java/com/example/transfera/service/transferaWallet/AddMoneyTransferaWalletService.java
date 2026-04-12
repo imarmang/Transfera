@@ -21,7 +21,8 @@ public class AddMoneyTransferaWalletService implements Command<AddMoneyRequestDT
     private final TransferaWalletRepository transferaWalletRepository;
     private final LinkedBankAccountRepository linkedBankAccountRepository;
 
-    public AddMoneyTransferaWalletService(TransferaWalletRepository transferaWalletRepository, LinkedBankAccountRepository linkedBankAccountRepository ) {
+    public AddMoneyTransferaWalletService( TransferaWalletRepository transferaWalletRepository,
+                                           LinkedBankAccountRepository linkedBankAccountRepository ) {
         this.transferaWalletRepository = transferaWalletRepository;
         this.linkedBankAccountRepository = linkedBankAccountRepository;
     }
