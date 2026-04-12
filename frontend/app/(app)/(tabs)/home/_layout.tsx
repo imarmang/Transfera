@@ -8,6 +8,10 @@ export default function HomeLayout() {
         name="add-money-modal"
         options={{ presentation: 'fullScreenModal' }}
       />
+      <Stack.Screen
+        name="cash-out-modal"
+        options={{ presentation: 'fullScreenModal' }}
+      />
     </Stack>
   );
 }

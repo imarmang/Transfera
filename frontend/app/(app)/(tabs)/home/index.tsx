@@ -70,7 +70,7 @@ export default function Index() {
           </Pressable>
           <Pressable
             style={styles.balanceButton}
-            onPress={() => setError('Cash out is not yet implemented')}
+            onPress={() => router.push('/home/cash-out-modal')}
           >
             <Text style={styles.balanceButtonText}>Cash Out</Text>
           </Pressable>
