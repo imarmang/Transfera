@@ -44,4 +44,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleLinkedBankAccountNotFoundException( LinkedBankAccountNotFoundException exception ) {
         return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( new ErrorResponse( exception.getMessage() ) );
     }
+    @ExceptionHandler( InsufficientBalanceTransferaWalletException.class )
+    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException( InsufficientBalanceTransferaWalletException exception ) {
+        return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( new ErrorResponse( exception.getMessage() ) );
+    }
 }

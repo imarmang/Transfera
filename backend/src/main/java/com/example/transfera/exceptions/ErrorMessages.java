@@ -10,7 +10,8 @@ public enum ErrorMessages {
     INVALID_RESET_TOKEN_EXCEPTION( "Invalid or expired reset token" ),
     GOOGLE_AUTH_FAILED( "Google authentication failed" ),
     LINKED_ACCOUNT_EXISTS( "This bank information is already linked to your account" ),
-    LINKED_ACCOUNT_DOES_NOT_EXIST( "The bank account you requested to pull funds from doesn't exist" );
+    LINKED_ACCOUNT_DOES_NOT_EXIST( "The bank account you requested to pull funds from doesn't exist" ),
+    INSUFFICIENT_BALANCE_TRANSFERA_WALLET( "Insufficient balance to complete this transaction" );
 
 
 

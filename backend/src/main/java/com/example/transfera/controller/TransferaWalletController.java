@@ -1,6 +1,7 @@
 package com.example.transfera.controller;
 
 import com.example.transfera.dto.TransferaWalletDTO.AddMoneyRequestDTO;
+import com.example.transfera.dto.TransferaWalletDTO.CashOutRequestDTO;
 import com.example.transfera.dto.TransferaWalletDTO.TransferaWalletDTO;
 import com.example.transfera.service.transferaWallet.*;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,14 @@ public class TransferaWalletController {
 
     private final GetTransferaWalletService getTransferaWalletService;
     private final AddMoneyTransferaWalletService addMoneyTransferaWalletService;
+    private final CashOutMoneyTransferaWalletService subtractMoneyTransferaWalletService;
 
     public TransferaWalletController( GetTransferaWalletService getTransferaWalletService,
-                                      AddMoneyTransferaWalletService addMoneyTransferaWalletService ) {
+                                      AddMoneyTransferaWalletService addMoneyTransferaWalletService,
+                                      CashOutMoneyTransferaWalletService subtractMoneyTransferaWalletService ) {
         this.getTransferaWalletService = getTransferaWalletService;
         this.addMoneyTransferaWalletService = addMoneyTransferaWalletService;
+        this.subtractMoneyTransferaWalletService = subtractMoneyTransferaWalletService;
     }
 
     @GetMapping
@@ -30,8 +34,8 @@ public class TransferaWalletController {
         return addMoneyTransferaWalletService.execute( transferaWalletDTO );
     }
 
-    @PostMapping( "/subtract-money" )
-    public ResponseEntity<Void> subtractMoney(){
-        return null;
+    @PostMapping( "/cash-out" )
+    public ResponseEntity<TransferaWalletDTO> cashOut( @RequestBody CashOutRequestDTO request ) {
+        return subtractMoneyTransferaWalletService.execute( request );
     }
 }
