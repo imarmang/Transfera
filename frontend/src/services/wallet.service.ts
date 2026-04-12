@@ -18,3 +18,26 @@ export async function getTransferaWalletRequest( token: string ): Promise<Transf
 
   return res.json();
 }
+
+
+export type AddMoneyRequestDTO = {
+  linkedBankAccountId: string,
+  amount: number,
+}
+
+// Add Money to the user's current balance that is on their Transfera account
+export async function addMoneyTransferaWalletRequest( token: string, body: AddMoneyRequestDTO ): Promise<void> {
+
+  const res = await fetch(`${API_BASE}/api/v1/add-money`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if ( !res.ok ) throw new Error( 'Failed to add money to Transfera Wallet' );
+
+  return res.json();
+}

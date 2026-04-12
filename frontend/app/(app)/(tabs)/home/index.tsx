@@ -6,18 +6,13 @@ import { faMagnifyingGlass, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { getTransferaWalletRequest, TransferaWalletDTO } from '@/src/services/wallet.service';
 import { useSession } from '@/src/context/AuthContext';
-import AddMoneyModal from './add-money-modal';
-import { useCustomAmount } from '@/src/context/CustomAmountContext';
-import { getLinkedBankAccountRequest } from '@/src/services/linked-account.service';
 
 export default function Index() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [wallet, setWallet] = useState<TransferaWalletDTO | null>(null);
-  const [showAddMoney, setShowAddMoney] = useState(false);
 
   const { session } = useSession();
-  const { confirmedAmount, setHasLinkedAccount } = useCustomAmount();
 
   async function fetchWallet() {
     setLoading(true);
@@ -32,29 +27,15 @@ export default function Index() {
     }
   }
 
-  async function fetchLinkedAccounts() {
-    try {
-      const accounts = await getLinkedBankAccountRequest(session!);
-      setHasLinkedAccount(accounts.length > 0);
-    } catch {
-      setHasLinkedAccount(false);
-    }
-  }
-
   useEffect(() => {
     fetchWallet();
-    fetchLinkedAccounts();
   }, []);
 
-  // Reopen modal if returning from CustomAmountScreen with a confirmed amount.
-  // Also re-fetch linked accounts in case user just linked one.
+  // Re-fetch wallet when returning from add-money screen
   useFocusEffect(
     useCallback(() => {
-      fetchLinkedAccounts();
-      if (confirmedAmount !== null) {
-        setShowAddMoney(true);
-      }
-    }, [confirmedAmount])
+      fetchWallet();
+    }, [])
   );
 
   return (
@@ -81,7 +62,10 @@ export default function Index() {
           {loading ? '...' : `$${wallet?.balance.toFixed(2) ?? '0.00'}`}
         </Text>
         <View style={styles.balanceAction}>
-          <Pressable style={styles.balanceButton} onPress={() => setShowAddMoney(true)}>
+          <Pressable
+            style={styles.balanceButton}
+            onPress={() => router.push('/home/add-money-modal')}
+          >
             <Text style={styles.balanceButtonText}>Add Money</Text>
           </Pressable>
           <Pressable
@@ -98,12 +82,6 @@ export default function Index() {
           <Text style={styles.errorText}>{error}</Text>
         </View>
       )}
-
-      <AddMoneyModal
-        visible={showAddMoney}
-        onClose={() => setShowAddMoney(false)}
-        onContinue={(amount: number) => {}}
-      />
     </ScrollView>
   );
 }

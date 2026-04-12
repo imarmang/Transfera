@@ -1,276 +1,420 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
-  Animated,
-  Modal,
-  View,
-  Text,
-  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { colors } from '@/src/themes/colors';
-import { useCustomAmount } from '@/src/context/CustomAmountContext';
-import NoLinkedAccountModal from './no-linked-account-modal';
-import SelectBankAccountModal from './select-bank-account-modal';
-import { LinkedBankAccountDTO, getLinkedBankAccountRequest } from '@/src/services/linked-account.service';
 import { useSession } from '@/src/context/AuthContext';
+import { getLinkedBankAccountRequest, LinkedBankAccountDTO } from '@/src/services/linked-account.service';
+import { addMoneyTransferaWalletRequest } from '@/src/services/wallet.service';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBuildingColumns, faCheck, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
-type Props = {
-  visible: boolean;
-  onClose: () => void;
-  onContinue: (amount: number) => void;
-};
+const QUICK_AMOUNTS = [10, 25, 50, 100, 200];
 
-const SHEET_SLIDE_DURATION = 320;
-const OVERLAY_FADE_DURATION = 200;
-const OVERLAY_DELAY = 180;
-
-export default function AddMoneyModal({ visible, onClose, onContinue }: Props) {
-  const [error, setError] = useState('');
-  const [amount, setAmount] = useState('');
-  const [isCustomAmount, setIsCustomAmount] = useState(false);
-  const [modalMounted, setModalMounted] = useState(false);
-  const [showNoAccount, setShowNoAccount] = useState(false);
-
+export default function AddMoneyScreen() {
   const { session } = useSession();
+
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [customInput, setCustomInput] = useState('');
+  const [isCustom, setIsCustom] = useState(false);
+
   const [accounts, setAccounts] = useState<LinkedBankAccountDTO[]>([]);
-  const [showSelectAccount, setShowSelectAccount] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
-  const [parsedAmount, setParsedAmount] = useState(0);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
 
-  const { confirmedAmount, setConfirmedAmount, hasLinkedAccount } = useCustomAmount();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const slideAnim = useRef(new Animated.Value(500)).current;
-  const overlayOpacity = useRef(new Animated.Value(0)).current;
+  // ─── Derived ──────────────────────────────────────────────────────────────────
+  const finalAmount = isCustom
+    ? parseFloat(customInput) || 0
+    : selectedAmount ?? 0;
 
-  const QUICK_AMOUNTS = [10, 25, 50, 100, 200];
+  const selectedAccount = accounts.find((a) => a.id === selectedAccountId) ?? null;
+  const canSubmit = finalAmount > 0 && !!selectedAccountId && !submitting;
 
-  // ─── Animation Effect ─────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (visible) {
-      slideAnim.setValue(500);
-      overlayOpacity.setValue(0);
-      setModalMounted(true);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: SHEET_SLIDE_DURATION,
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.delay(OVERLAY_DELAY),
-          Animated.timing(overlayOpacity, {
-            toValue: 1,
-            duration: OVERLAY_FADE_DURATION,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(overlayOpacity, {
-          toValue: 0,
-          duration: OVERLAY_FADE_DURATION,
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.delay(100),
-          Animated.timing(slideAnim, {
-            toValue: 500,
-            duration: SHEET_SLIDE_DURATION,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start(() => setModalMounted(false));
-    }
-  }, [visible]);
-
-  // ─── Custom Amount Effect ─────────────────────────────────────────────────────
-  // Picks up the confirmed amount from CustomAmountScreen via context
-  useEffect(() => {
-    if (confirmedAmount !== null) {
-      setAmount(confirmedAmount);
-      setIsCustomAmount(true);
-      setConfirmedAmount(null);
-    }
-  }, [confirmedAmount]);
+  useFocusEffect(
+    useCallback(() => {
+      setLoadingAccounts(true);
+      getLinkedBankAccountRequest(session!)
+        .then((data) => {
+          setAccounts(data);
+          if (data.length === 1) setSelectedAccountId(data[0].id);
+        })
+        .catch(() => setError('Failed to load bank accounts.'))
+        .finally(() => setLoadingAccounts(false));
+    }, [])
+  );
 
   // ─── Handlers ────────────────────────────────────────────────────────────────
-
-  function handleClose() {
-    setAmount('');
-    setError('');
-    setIsCustomAmount(false);
-    onClose();
-  }
-
   function handleQuickSelect(value: number) {
-    setAmount(String(value));
+    setSelectedAmount(value);
+    setIsCustom(false);
+    setCustomInput('');
     setError('');
-    setIsCustomAmount(false);
   }
 
-  function handleCustomPress() {
-    // Navigate immediately, close modal in background simultaneously
-    router.push('/home/custom-amount-screen');
-    onClose();
+  function handleCustomChange(text: string) {
+    const cleaned = text.replace(/[^0-9.]/g, '');
+    const parts = cleaned.split('.');
+    if (parts.length > 2) return;
+    if (parts[1] && parts[1].length > 2) return;
+    if (parts[0].length > 6) return;
+    setCustomInput(cleaned);
+    setIsCustom(true);
+    setSelectedAmount(null);
+    setError('');
   }
 
-  function handleContinue() {
-    const parsed = parseFloat(amount);
-    if (!amount || isNaN(parsed) || parsed <= 0) {
-      setError('Please enter a valid amount.');
-      return;
+  async function handleAddMoney() {
+    if (!canSubmit) return;
+    setError('');
+    setSubmitting(true);
+    try {
+      await addMoneyTransferaWalletRequest(session!, {
+        linkedBankAccountId: selectedAccountId!,
+        amount: finalAmount,
+      });
+      router.back();
+    } catch (e: any) {
+      setError(e.message ?? 'Failed to add money. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-    if (!hasLinkedAccount) {
-      setShowNoAccount(true);
-      return;
-    }
-    // Fetch accounts and show selection modal
-    setParsedAmount(parsed);
-    getLinkedBankAccountRequest(session!).then((data) => {
-      setAccounts(data);
-      setShowSelectAccount(true);
-    });
   }
 
-  // ─── Render ──────────────────────────────────────────────────────────────────
+  // ─── Render ───────────────────────────────────────────────────────────────────
   return (
-    <Modal visible={modalMounted} animationType="none" transparent onRequestClose={handleClose}>
-      <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.root}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <FontAwesomeIcon icon={faChevronLeft} size={18} color={colors.bodyText} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Add Money</Text>
+        <View style={styles.backButton} />
+      </View>
 
-        {/* Dim overlay */}
-        <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
-        </Animated.View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
 
-        {/* Handle bar */}
-        <Animated.View style={{ transform: [{ translateY: slideAnim }] }}>
-          <Pressable style={styles.handleContainer} onPress={handleClose}>
-            <View style={styles.handle} />
-          </Pressable>
-        </Animated.View>
-
-        {/* Sheet */}
-        <Animated.View style={{ transform: [{ translateY: slideAnim }] }}>
-          <View style={styles.sheet}>
-            <Text style={styles.title}>Add Money</Text>
-            <Text style={styles.subtitle}>Select or Enter an Amount</Text>
-
-            {/* Quick amount buttons + custom amount button */}
-            <View style={styles.quickAmounts}>
+        {/* ── Amount Section ── */}
+        {!loadingAccounts && accounts.length > 0 && (
+          <>
+            <Text style={styles.sectionLabel}>Select Amount</Text>
+            <View style={styles.quickGrid}>
               {QUICK_AMOUNTS.map((value) => (
                 <Pressable
                   key={value}
-                  style={[
-                    styles.quickButton,
-                    amount === String(value) && !isCustomAmount && styles.quickButtonSelected,
-                  ]}
+                  style={[styles.quickButton, selectedAmount === value && !isCustom && styles.quickButtonSelected]}
                   onPress={() => handleQuickSelect(value)}
                 >
-                  <Text
-                    style={[
-                      styles.quickButtonText,
-                      amount === String(value) && !isCustomAmount && styles.quickButtonTextSelected,
-                    ]}
-                  >
+                  <Text style={[styles.quickButtonText, selectedAmount === value && !isCustom && styles.quickButtonTextSelected]}>
                     ${value}
                   </Text>
                 </Pressable>
               ))}
-
-              {/* ••• button — shows entered amount once confirmed */}
-              <Pressable
-                style={[styles.quickButton, isCustomAmount && styles.quickButtonSelected]}
-                onPress={handleCustomPress}
-              >
-                <Text style={[styles.quickButtonText, isCustomAmount && styles.quickButtonTextSelected]}>
-                  {isCustomAmount ? `$${amount}` : '•••'}
-                </Text>
-              </Pressable>
             </View>
 
-            {/* Validation error */}
-            {!!error && <Text style={styles.error}>{error}</Text>}
+            {/* Custom amount input */}
+            <View style={[styles.customInputContainer, isCustom && customInput && styles.customInputContainerSelected]}>
+              <Text style={styles.customInputPrefix}>$</Text>
+              <TextInput
+                style={styles.customInput}
+                placeholder="Custom amount"
+                placeholderTextColor={colors.subtitleText}
+                value={customInput}
+                onChangeText={handleCustomChange}
+                keyboardType="decimal-pad"
+                onFocus={() => {
+                  if (customInput) {
+                    setIsCustom(true);
+                    setSelectedAmount(null);
+                  }
+                }}
+              />
+            </View>
+          </>
+        )}
 
-            {/* Confirm button — disabled until an amount is selected */}
-            <Pressable
-              style={[styles.addButton, !amount && styles.addButtonDisabled]}
-              onPress={handleContinue}
-              disabled={!amount}
-            >
-              <Text style={styles.addButtonText}>
-                {amount ? `Add $${parseFloat(amount) || '0'}` : 'Add'}
-              </Text>
-            </Pressable>
+
+
+      {/* ── Bank Account Section ── */}
+        <Text style={[styles.sectionLabel, { marginTop: 28 }]}>From Account</Text>
+
+        {loadingAccounts ? (
+          <Text style={styles.loadingText}>Loading accounts...</Text>
+        ) : accounts.length === 0 ? (
+          <Pressable
+            style={styles.noAccountCard}
+            onPress={() => router.push('/profile/linked-bank-accounts')}
+          >
+            <FontAwesomeIcon icon={faBuildingColumns} size={20} color={colors.primary} />
+            <Text style={styles.noAccountText}>No bank accounts linked. Tap to add one.</Text>
+          </Pressable>
+        ) : (
+          <View style={styles.accountList}>
+            {accounts.map((account) => {
+              const isSelected = account.id === selectedAccountId;
+              return (
+                <Pressable
+                  key={account.id}
+                  style={[styles.accountRow, isSelected && styles.accountRowSelected]}
+                  onPress={() => setSelectedAccountId(account.id)}
+                >
+                  <View style={styles.accountIcon}>
+                    <FontAwesomeIcon
+                      icon={faBuildingColumns}
+                      size={18}
+                      color={isSelected ? colors.primary : colors.subtitleText}
+                    />
+                  </View>
+                  <View style={styles.accountInfo}>
+                    <Text style={styles.accountBank}>{account.bankName}</Text>
+                    <Text style={styles.accountDetails}>
+                      {account.accountType.charAt(0) + account.accountType.slice(1).toLowerCase()} •••• {account.lastFourDigitsAccountNumber}
+                    </Text>
+                  </View>
+                  {isSelected && (
+                    <FontAwesomeIcon icon={faCheck} size={16} color={colors.primary} />
+                  )}
+                </Pressable>
+              );
+            })}
           </View>
-        </Animated.View>
+        )}
 
-        {/* No linked account prompt — appears on top of the sheet */}
-        <NoLinkedAccountModal
-          visible={showNoAccount}
-          onClose={() => setShowNoAccount(false)}
-          onCloseParent={handleClose}
-        />
+        {/* Error */}
+        {!!error && (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
-        {/* Bank account selection */}
-        <SelectBankAccountModal
-          visible={showSelectAccount}
-          onClose={() => setShowSelectAccount(false)}
-          accounts={accounts}
-          amount={parsedAmount}
-          selectedAccountId={selectedAccountId}
-          onSelectAccount={(id) => setSelectedAccountId(id)}
-          onConfirm={(account) => {
-            setShowSelectAccount(false);
-            // TODO: call add money API with account.id and parsedAmount
-            console.log(`Add $${parsedAmount} from account ${account.id}`);
-            onContinue(parsedAmount);
-            handleClose();
-          }}
-        />
+      </ScrollView>
 
+      <View style={styles.footer}>
+        {!loadingAccounts && accounts.length === 0 ? (
+          <Pressable
+            style={styles.addButton}
+            onPress={() => router.push('/profile/linked-bank-accounts')}
+          >
+            <Text style={styles.addButtonText}>Link a Bank Account</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={[styles.addButton, !canSubmit && styles.addButtonDisabled]}
+            onPress={handleAddMoney}
+            disabled={!canSubmit}
+          >
+            <Text style={styles.addButtonText}>
+              {submitting
+                ? 'Adding...'
+                : finalAmount > 0
+                  ? `Add $${finalAmount.toFixed(2)} to Transfera Wallet`
+                  : 'Add Money to Transfera Wallet'}
+            </Text>
+          </Pressable>
+        )}
       </View>
-    </Modal>
+
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-end' },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  handleContainer: { alignItems: 'center', paddingVertical: 10 },
-  handle: {
-    width: 40, height: 4, borderRadius: 2,
-    backgroundColor: 'rgba(255,255,255,0.6)',
-  },
-  sheet: {
+  root: {
+    flex: 1,
     backgroundColor: colors.background,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 24,
-    paddingBottom: 48,
-    gap: 16,
   },
-  title: { fontSize: 22, fontWeight: '800', textAlign: 'center', color: colors.bodyText },
-  subtitle: { fontSize: 14, color: colors.subtitleText, textAlign: 'center' },
-  quickAmounts: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 16,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.bodyText,
+  },
+  scroll: { flex: 1 },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  sectionLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.subtitleText,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 12,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 12,
+  },
   quickButton: {
-    width: '30%', height: 52, borderRadius: 12,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: colors.card, borderWidth: 1.5, borderColor: 'transparent',
+    width: '30%',
+    height: 52,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.card,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
-  quickButtonSelected: { borderColor: colors.primary },
-  quickButtonText: { fontSize: 16, fontWeight: '600', color: colors.bodyText },
-  quickButtonTextSelected: { color: colors.primary },
-  error: { fontSize: 13, color: '#E53E3E', textAlign: 'center', marginTop: -8 },
+  quickButtonSelected: {
+    borderColor: colors.primary,
+  },
+  quickButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.bodyText,
+  },
+  quickButtonTextSelected: {
+    color: colors.primary,
+  },
+  customInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 52,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+  },
+  customInputContainerSelected: {
+    borderColor: colors.primary,
+  },
+  customInputPrefix: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.bodyText,
+    marginRight: 4,
+  },
+  customInput: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.bodyText,
+  },
+  loadingText: {
+    color: colors.subtitleText,
+    fontSize: 14,
+    textAlign: 'center',
+    paddingVertical: 20,
+  },
+  noAccountCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: colors.card,
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
+  noAccountText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.bodyText,
+  },
+  accountList: {
+    gap: 10,
+  },
+  accountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: colors.card,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+    gap: 12,
+  },
+  accountRowSelected: {
+    borderColor: colors.primary,
+  },
+  accountIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accountInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  accountBank: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.bodyText,
+  },
+  accountDetails: {
+    fontSize: 13,
+    color: colors.subtitleText,
+  },
+  errorBox: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: colors.errorBackground,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    paddingTop: 12,
+  },
   addButton: {
-    height: 52, borderRadius: 14,
-    alignItems: 'center', justifyContent: 'center',
+    height: 54,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.primary,
   },
-  addButtonDisabled: { backgroundColor: colors.primaryDisabled },
-  addButtonText: { fontSize: 16, fontWeight: '800', color: colors.primaryText },
+  addButtonDisabled: {
+    backgroundColor: colors.primaryDisabled,
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.primaryText,
+  },
 });
