@@ -3,7 +3,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { View, StyleSheet, Pressable, Text, TextInput } from 'react-native';
 import { useState } from 'react';
 
-export default function Send() {
+export default function Pay() {
   const { amount } = useLocalSearchParams<{ amount: string }>();
   const [to, setTo] = useState('');
   const [note, setNote] = useState('');
@@ -26,7 +26,7 @@ export default function Send() {
       <View style={styles.divider}></View>
       {/* End of top bar */}
 
-      {/* Send to and Note */}
+      {/* Index to and Note */}
       <View style={styles.fieldRow}>
         <Text style={styles.fieldLabel}>To</Text>
         <TextInput
@@ -54,7 +54,7 @@ export default function Send() {
       </View>
 
       <View style={styles.divider}></View>
-      {/* End of Send to and Note */}
+      {/* End of Index to and Note */}
 
       {/* Suggested */}
       <View style={styles.suggestedSection}>

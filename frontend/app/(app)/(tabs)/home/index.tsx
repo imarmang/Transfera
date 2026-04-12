@@ -10,7 +10,7 @@ import AddMoneyModal from './add-money-modal';
 import { useCustomAmount } from '@/src/context/CustomAmountContext';
 import { getLinkedBankAccountRequest } from '@/src/services/linked-account.service';
 
-export default function Home() {
+export default function Index() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [wallet, setWallet] = useState<TransferaWalletDTO | null>(null);

@@ -5,7 +5,7 @@ import { Tabs } from 'expo-router';
 export default function TabsLayout() {
   return (
     <Tabs
-      initialRouteName="index"
+      initialRouteName="send"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
@@ -16,7 +16,10 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: 'rgba(255,255,255,0.4)',
       }}
     >
-
+      <Tabs.Screen
+        name="index"
+        options={{ href: null }}  // hides it from the tab bar
+      />
       <Tabs.Screen
         name="home"
         options={{
@@ -24,9 +27,8 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faHouse} size={20} color={color} />,
         }}
       />
-
       <Tabs.Screen
-        name="index"
+        name="send"
         options={{
           title: 'Send',
           tabBarIcon: ({ color }) => <FontAwesomeIcon icon={faArrowUp} size={20} color={color} />,

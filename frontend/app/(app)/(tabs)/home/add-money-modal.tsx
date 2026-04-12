@@ -11,6 +11,9 @@ import { router } from 'expo-router';
 import { colors } from '@/src/themes/colors';
 import { useCustomAmount } from '@/src/context/CustomAmountContext';
 import NoLinkedAccountModal from './no-linked-account-modal';
+import SelectBankAccountModal from './select-bank-account-modal';
+import { LinkedBankAccountDTO, getLinkedBankAccountRequest } from '@/src/services/linked-account.service';
+import { useSession } from '@/src/context/AuthContext';
 
 type Props = {
   visible: boolean;
@@ -28,6 +31,12 @@ export default function AddMoneyModal({ visible, onClose, onContinue }: Props) {
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [modalMounted, setModalMounted] = useState(false);
   const [showNoAccount, setShowNoAccount] = useState(false);
+
+  const { session } = useSession();
+  const [accounts, setAccounts] = useState<LinkedBankAccountDTO[]>([]);
+  const [showSelectAccount, setShowSelectAccount] = useState(false);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
+  const [parsedAmount, setParsedAmount] = useState(0);
 
   const { confirmedAmount, setConfirmedAmount, hasLinkedAccount } = useCustomAmount();
 
@@ -113,12 +122,16 @@ export default function AddMoneyModal({ visible, onClose, onContinue }: Props) {
       setError('Please enter a valid amount.');
       return;
     }
-    // Show no linked account prompt if needed
     if (!hasLinkedAccount) {
       setShowNoAccount(true);
       return;
     }
-    onContinue(parsed);
+    // Fetch accounts and show selection modal
+    setParsedAmount(parsed);
+    getLinkedBankAccountRequest(session!).then((data) => {
+      setAccounts(data);
+      setShowSelectAccount(true);
+    });
   }
 
   // ─── Render ──────────────────────────────────────────────────────────────────
@@ -198,6 +211,23 @@ export default function AddMoneyModal({ visible, onClose, onContinue }: Props) {
           visible={showNoAccount}
           onClose={() => setShowNoAccount(false)}
           onCloseParent={handleClose}
+        />
+
+        {/* Bank account selection */}
+        <SelectBankAccountModal
+          visible={showSelectAccount}
+          onClose={() => setShowSelectAccount(false)}
+          accounts={accounts}
+          amount={parsedAmount}
+          selectedAccountId={selectedAccountId}
+          onSelectAccount={(id) => setSelectedAccountId(id)}
+          onConfirm={(account) => {
+            setShowSelectAccount(false);
+            // TODO: call add money API with account.id and parsedAmount
+            console.log(`Add $${parsedAmount} from account ${account.id}`);
+            onContinue(parsedAmount);
+            handleClose();
+          }}
         />
 
       </View>

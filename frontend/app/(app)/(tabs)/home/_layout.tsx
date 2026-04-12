@@ -4,8 +4,8 @@ import { Stack } from 'expo-router';
 export default function HomeLayout() {
   return (
     <CustomAmountProvider>
-      <Stack screenOptions={{headerShown: false }} >
-        <Stack.Screen name="home" />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
         <Stack.Screen name="add-money-modal" />
         <Stack.Screen
           name="custom-amount-screen"
@@ -15,5 +15,5 @@ export default function HomeLayout() {
         />
       </Stack>
     </CustomAmountProvider>
-  )
+  );
 }

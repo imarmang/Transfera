@@ -24,7 +24,7 @@ function RootNavigator() {
         <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
       </Stack.Protected>
 
-      {/* Fully Authenticated but has profile Area */}
+      {/* Authenticated but profile not yet created */}
       <Stack.Protected guard={!!session && !hasProfile}>
         <Stack.Screen name="create-profile" options={{ headerShown: false }} />
       </Stack.Protected>

@@ -5,7 +5,6 @@ export default function AppLayout() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
-      <Stack.Screen name="send" options={{ headerShown: false, presentation: 'fullScreenModal' }} />
     </Stack>
   );
 }
