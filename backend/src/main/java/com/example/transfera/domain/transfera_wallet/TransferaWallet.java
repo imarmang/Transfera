@@ -7,10 +7,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-// TODO: change bank account to Transfera Wallet
-
-// bank account entity, which holds the account number, balance,
-// there is a one-to-one relationship between the user and the account
 @Entity
 @Data
 @Table( name="transfera_wallet" )
@@ -20,6 +16,14 @@ public class TransferaWallet {
     @GeneratedValue( strategy = GenerationType.UUID )
     @Column( name="id" )
     private UUID id;
+
+    // Optimistic locking — prevents lost updates when concurrent transactions
+    // modify the same wallet simultaneously. Hibernate auto-increments this
+    // value on every save and throws OptimisticLockException if two transactions
+    // try to update the same version at the same time.
+    @Version
+    @Column( name = "version" )
+    private Long version;
 
     @Column( name="wallet_number", unique = true, nullable = false )
     private String walletNumber;
