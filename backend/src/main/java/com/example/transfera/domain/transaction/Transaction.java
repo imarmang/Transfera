@@ -18,21 +18,21 @@ public class Transaction {
 
     @Id
     @GeneratedValue( strategy = GenerationType.UUID )
-    @Column( table = "id", nullable = false, unique = true, updatable = false )
+    @Column( name = "transaction_id", nullable = false, unique = true, updatable = false )
     private UUID transactionId;
 
-    @Column( table = "created_at", nullable = false )
+    @Column( name = "created_at", nullable = false )
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column( table = "amount", nullable = false )
+    @Column( name = "amount", nullable = false )
     private BigDecimal amount;
 
     @Enumerated( EnumType.STRING )
-    @Column( table = "type", nullable = false )
+    @Column( name = "type", nullable = false )
     private TransactionType type;
 
     @Enumerated( EnumType.STRING )
-    @Column( table = "status", nullable = false )
+    @Column( name = "status", nullable = false )
     private TransactionStatus status;
 
     // The user's wallet
@@ -45,8 +45,6 @@ public class Transaction {
     @JoinColumn( name = "linked_bank_account_id", nullable = true )
     private LinkedBankAccount linkedBankAccount;
 
-    // Used when the user sends or receives money, peer wallet means the other user's wallet number
-    @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( name = "peer_wallet", nullable = true )
-    private TransferaWallet peerWallet;
+    @Column( name = "peer_name" )
+    private String peerName;
 }
