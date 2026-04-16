@@ -3,6 +3,8 @@ package com.example.transfera.domain.transaction;
 import com.example.transfera.domain.linked_bank_account.LinkedBankAccount;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +12,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table( name = "transaction" )
 public class Transaction {
 
@@ -22,6 +26,7 @@ public class Transaction {
     private UUID transactionId;
 
     @Column( name = "created_at", nullable = false )
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column( name = "amount", nullable = false )
