@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    List<Transaction> findAllTransactionsOfThisUser( UUID walletId );
+    List<Transaction> findAllByTransferaWallet_IdOrderByCreatedAtDesc(UUID id );
 }
