@@ -2,6 +2,7 @@ package com.example.transfera.service.transferaWallet;
 
 import com.example.transfera.domain.linked_bank_account.LinkedBankAccount;
 import com.example.transfera.domain.linked_bank_account.LinkedBankAccountRepository;
+import com.example.transfera.domain.transaction.Transaction;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
 import com.example.transfera.domain.user.UserCredentials;
@@ -9,6 +10,7 @@ import com.example.transfera.dto.TransferaWalletDTO.AddMoneyRequestDTO;
 import com.example.transfera.dto.TransferaWalletDTO.TransferaWalletDTO;
 import com.example.transfera.exceptions.customExceptions.LinkedBankAccountNotFoundException;
 import com.example.transfera.exceptions.customExceptions.TransferaWalletNotFoundException;
+import com.example.transfera.service.transaction.CreateTransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,6 +45,9 @@ class AddMoneyTransferaWalletServiceTest {
 
     @Mock
     private LinkedBankAccountRepository linkedBankAccountRepository;
+
+    @Mock
+    private CreateTransactionService createTransactionService;
 
     @InjectMocks
     private AddMoneyTransferaWalletService addMoneyTransferaWalletService;
@@ -127,6 +132,7 @@ class AddMoneyTransferaWalletServiceTest {
         assertThat( response.getBody() ).isNotNull();
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "150.00" ) );
         verify( transferaWalletRepository ).save( wallet );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
     }
 
     @Test
@@ -143,6 +149,19 @@ class AddMoneyTransferaWalletServiceTest {
 
         verify( transferaWalletRepository, never() ).findByUserCredentialsEmail( any() );
         verify( transferaWalletRepository, never() ).save( any() );
+    }
+
+    @Test
+    void execute_linkedBankAccountNotFound_neverCreatesTransaction() {
+        AddMoneyRequestDTO request = buildRequest( ACCOUNT_ID, new BigDecimal( "50.00" ) );
+
+        when( linkedBankAccountRepository.findByIdAndUserCredentialsEmail( ACCOUNT_ID, EMAIL ) )
+                .thenReturn( Optional.empty() );
+
+        assertThatThrownBy( () -> addMoneyTransferaWalletService.execute( request ) )
+                .isInstanceOf( LinkedBankAccountNotFoundException.class );
+
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
     }
 
     @Test
@@ -165,6 +184,23 @@ class AddMoneyTransferaWalletServiceTest {
     }
 
     @Test
+    void execute_walletNotFound_neverCreatesTransaction() {
+        UserCredentials user = buildUser();
+        LinkedBankAccount account = buildLinkedBankAccount( user );
+        AddMoneyRequestDTO request = buildRequest( ACCOUNT_ID, new BigDecimal( "50.00" ) );
+
+        when( linkedBankAccountRepository.findByIdAndUserCredentialsEmail( ACCOUNT_ID, EMAIL ) )
+                .thenReturn( Optional.of( account ) );
+        when( transferaWalletRepository.findByUserCredentialsEmail( EMAIL ) )
+                .thenReturn( Optional.empty() );
+
+        assertThatThrownBy( () -> addMoneyTransferaWalletService.execute( request ) )
+                .isInstanceOf( TransferaWalletNotFoundException.class );
+
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
+    }
+
+    @Test
     void execute_zeroStartingBalance_addsCorrectly() {
         // Arrange
         UserCredentials user = buildUser();
@@ -184,6 +220,8 @@ class AddMoneyTransferaWalletServiceTest {
 
         // Assert
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "25.50" ) );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     @Test
@@ -206,6 +244,8 @@ class AddMoneyTransferaWalletServiceTest {
 
         // Assert
         verify( transferaWalletRepository, times( 1 ) ).save( wallet );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     @Test
@@ -228,6 +268,7 @@ class AddMoneyTransferaWalletServiceTest {
 
         // Assert
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "1999999.98" ) );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
     }
 
     @Test
@@ -250,6 +291,8 @@ class AddMoneyTransferaWalletServiceTest {
 
         // Assert
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "10.99" ) );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     // ─── Concurrency Tests ────────────────────────────────────────────────────
