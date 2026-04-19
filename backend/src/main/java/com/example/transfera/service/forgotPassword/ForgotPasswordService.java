@@ -24,7 +24,6 @@ public class ForgotPasswordService {
     private final UserCredentialsRepository userCredentialsRepository;
     private final PasswordResetRepository passwordResetRepository;
     private final JavaMailSender mailSender;
-
     @Value("${app.frontend.url}")
     private String frontEndUrl;
 
@@ -32,7 +31,9 @@ public class ForgotPasswordService {
     private String from;
 
 
-    public ForgotPasswordService(UserCredentialsRepository userCredentialsRepository, PasswordResetRepository passwordResetRepository, JavaMailSender mailSender) {
+    public ForgotPasswordService( UserCredentialsRepository userCredentialsRepository,
+                                  PasswordResetRepository passwordResetRepository,
+                                  JavaMailSender mailSender ) {
         this.userCredentialsRepository = userCredentialsRepository;
         this.passwordResetRepository = passwordResetRepository;
         this.mailSender = mailSender;
