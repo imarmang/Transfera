@@ -16,6 +16,7 @@ import { getLinkedBankAccountRequest, LinkedBankAccountDTO } from '@/src/service
 import { addMoneyTransferaWalletRequest } from '@/src/services/wallet.service';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBuildingColumns, faCheck, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import LinkBankAccountModal from '@/app/(app)/profile/link-account-modal';
 
 const QUICK_AMOUNTS = [10, 25, 50, 100, 200];
 
@@ -29,6 +30,7 @@ export default function AddMoneyScreen() {
   const [accounts, setAccounts] = useState<LinkedBankAccountDTO[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
+  const [showLinkModal, setShowLinkModal] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -212,7 +214,8 @@ export default function AddMoneyScreen() {
         {!loadingAccounts && accounts.length === 0 ? (
           <Pressable
             style={styles.addButton}
-            onPress={() => router.push('/profile/linked-bank-accounts')}
+            // onPress={() => router.replace('/profile/linked-bank-accounts')}
+            onPress={() => setShowLinkModal(true)}
           >
             <Text style={styles.addButtonText}>Link a Bank Account</Text>
           </Pressable>
@@ -232,7 +235,15 @@ export default function AddMoneyScreen() {
           </Pressable>
         )}
       </View>
-
+      <LinkBankAccountModal
+        visible={showLinkModal}
+        onClose={() => setShowLinkModal(false)}
+        onSuccess={(newAccount) => {
+          setAccounts((prev) => [...prev, newAccount]);
+          setSelectedAccountId(newAccount.id);  // auto-select the new account
+          setShowLinkModal(false);
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }

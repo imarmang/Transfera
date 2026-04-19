@@ -5,7 +5,6 @@ import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
 import com.example.transfera.dto.UserDTO.CreateUserRequestDTO;
 import com.example.transfera.dto.UserDTO.UserCredentialsResponseDTO;
-import com.example.transfera.service.transferaWallet.CreateTransferaWalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +15,12 @@ public class CreateUserCredentialsService implements Command<CreateUserRequestDT
 
     private final UserCredentialsRepository userCredentialsRepository;
     private final PasswordEncoder           passwordEncoder;
-    private final CreateTransferaWalletService createTransferaWalletService;
 
 
-    public CreateUserCredentialsService( UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, CreateTransferaWalletService createTransferaWalletService) {
+    public CreateUserCredentialsService( UserCredentialsRepository userCredentialsRepository,
+                                         PasswordEncoder passwordEncoder ) {
         this.userCredentialsRepository = userCredentialsRepository;
         this.passwordEncoder = passwordEncoder;
-        this.createTransferaWalletService = createTransferaWalletService;
     }
 
     @Override
@@ -42,7 +40,6 @@ public class CreateUserCredentialsService implements Command<CreateUserRequestDT
                 new UserCredentials( request.getEmail(), passwordEncoder.encode( request.getPassword() ) )
         );
 
-        createTransferaWalletService.execute( savedUserCredentials );
 
         return ResponseEntity.status( HttpStatus.CREATED ).body( new UserCredentialsResponseDTO( savedUserCredentials ));
     }

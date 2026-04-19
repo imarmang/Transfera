@@ -2,6 +2,7 @@ package com.example.transfera.service.transferaWallet;
 
 import com.example.transfera.domain.linked_bank_account.LinkedBankAccount;
 import com.example.transfera.domain.linked_bank_account.LinkedBankAccountRepository;
+import com.example.transfera.domain.transaction.Transaction;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
 import com.example.transfera.domain.user.UserCredentials;
@@ -10,6 +11,7 @@ import com.example.transfera.dto.TransferaWalletDTO.TransferaWalletDTO;
 import com.example.transfera.exceptions.customExceptions.InsufficientBalanceTransferaWalletException;
 import com.example.transfera.exceptions.customExceptions.LinkedBankAccountNotFoundException;
 import com.example.transfera.exceptions.customExceptions.TransferaWalletNotFoundException;
+import com.example.transfera.service.transaction.CreateTransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +46,9 @@ class CashOutTransferaWalletServiceTest {
 
     @Mock
     private LinkedBankAccountRepository linkedBankAccountRepository;
+
+    @Mock
+    private CreateTransactionService createTransactionService;
 
     @InjectMocks
     private CashOutMoneyTransferaWalletService cashOutMoneyTransferaWalletService;
@@ -126,6 +131,7 @@ class CashOutTransferaWalletServiceTest {
         assertThat( response.getBody() ).isNotNull();
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "50.00" ) );
         verify( transferaWalletRepository ).save( wallet );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
     }
 
     // Verifies that the service throws LinkedBankAccountNotFoundException and never touches the wallet when the bank account does not belong to the user.
@@ -144,6 +150,19 @@ class CashOutTransferaWalletServiceTest {
     }
 
     @Test
+    void execute_linkedBankAccountNotFound_neverCreatesTransaction() {
+        CashOutRequestDTO request = buildRequest( ACCOUNT_ID, new BigDecimal( "50.00" ) );
+
+        when( linkedBankAccountRepository.findByIdAndUserCredentialsEmail( ACCOUNT_ID, EMAIL ) )
+                .thenReturn( Optional.empty() );
+
+        assertThatThrownBy( () -> cashOutMoneyTransferaWalletService.execute( request ) )
+                .isInstanceOf( LinkedBankAccountNotFoundException.class );
+
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
+    }
+
+    @Test
     void execute_walletNotFound_throwsTransferaWalletNotFoundException() {
         // Verifies that the service throws TransferaWalletNotFoundException and never calls save when the wallet does not exist.
         UserCredentials user = buildUser();
@@ -159,6 +178,23 @@ class CashOutTransferaWalletServiceTest {
                 .isInstanceOf( TransferaWalletNotFoundException.class );
 
         verify( transferaWalletRepository, never() ).save( any() );
+    }
+
+    @Test
+    void execute_walletNotFound_neverCreatesTransaction() {
+        UserCredentials user = buildUser();
+        LinkedBankAccount account = buildLinkedBankAccount( user );
+        CashOutRequestDTO request = buildRequest( ACCOUNT_ID, new BigDecimal( "50.00" ) );
+
+        when( linkedBankAccountRepository.findByIdAndUserCredentialsEmail( ACCOUNT_ID, EMAIL ) )
+                .thenReturn( Optional.of( account ) );
+        when( transferaWalletRepository.findByUserCredentialsEmail( EMAIL ) )
+                .thenReturn( Optional.empty() );
+
+        assertThatThrownBy( () -> cashOutMoneyTransferaWalletService.execute( request ) )
+                .isInstanceOf( TransferaWalletNotFoundException.class );
+
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
     }
 
     @Test
@@ -181,6 +217,25 @@ class CashOutTransferaWalletServiceTest {
     }
 
     @Test
+    void execute_insufficientBalance_neverCreatesTransaction() {
+        // Verifies that no transaction is recorded when the user doesn't have enough balance.
+        UserCredentials user = buildUser();
+        LinkedBankAccount account = buildLinkedBankAccount( user );
+        TransferaWallet wallet = buildWallet( user, new BigDecimal( "30.00" ) );
+        CashOutRequestDTO request = buildRequest( ACCOUNT_ID, new BigDecimal( "50.00" ) );
+
+        when( linkedBankAccountRepository.findByIdAndUserCredentialsEmail( ACCOUNT_ID, EMAIL ) )
+                .thenReturn( Optional.of( account ) );
+        when( transferaWalletRepository.findByUserCredentialsEmail( EMAIL ) )
+                .thenReturn( Optional.of( wallet ) );
+
+        assertThatThrownBy( () -> cashOutMoneyTransferaWalletService.execute( request ) )
+                .isInstanceOf( InsufficientBalanceTransferaWalletException.class );
+
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
+    }
+
+    @Test
     void execute_exactBalance_cashesOutSuccessfully() {
         // Verifies that cashing out the exact full balance results in a zero balance — an important financial edge case.
         UserCredentials user = buildUser();
@@ -198,6 +253,8 @@ class CashOutTransferaWalletServiceTest {
         ResponseEntity<TransferaWalletDTO> response = cashOutMoneyTransferaWalletService.execute( request );
 
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( BigDecimal.ZERO );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     @Test
@@ -218,6 +275,8 @@ class CashOutTransferaWalletServiceTest {
         cashOutMoneyTransferaWalletService.execute( request );
 
         verify( transferaWalletRepository, times( 1 ) ).save( wallet );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     @Test
@@ -238,6 +297,8 @@ class CashOutTransferaWalletServiceTest {
         ResponseEntity<TransferaWalletDTO> response = cashOutMoneyTransferaWalletService.execute( request );
 
         assertThat( response.getBody().getBalance() ).isEqualByComparingTo( new BigDecimal( "9.01" ) );
+        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+
     }
 
     // ─── Concurrency Tests ────────────────────────────────────────────────────
