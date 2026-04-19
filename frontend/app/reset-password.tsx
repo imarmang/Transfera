@@ -8,10 +8,10 @@ import {
   Platform,
 } from 'react-native';
 import { useState } from 'react';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { colors } from '@/src/themes/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faChevronLeft, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState( '' );
@@ -20,6 +20,8 @@ export default function ResetPassword() {
   const [showConfirm, setShowConfirm] = useState( false );
   const [error, setError] = useState( '' );
   const [loading, setLoading] = useState( false );
+  const { token } = useLocalSearchParams<{ token: string }>();
+
 
   function handleReset() {
     setError( '' );
@@ -31,8 +33,15 @@ export default function ResetPassword() {
       setError( 'Passwords do not match.' );
       return;
     }
+    if ( !token ) {
+      setError( 'Invalid or missing reset token.' );
+      return;
+    }
+
     // TODO: wire up API call
-    console.log( 'Reset password with:', newPassword );
+    console.log( 'token:', token );
+    console.log( 'newPassword:', newPassword );
+
   }
 
   return (
