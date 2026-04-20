@@ -2,6 +2,7 @@ package com.example.transfera.controller;
 
 import com.example.transfera.dto.TransferaWalletDTO.AddMoneyRequestDTO;
 import com.example.transfera.dto.TransferaWalletDTO.CashOutRequestDTO;
+import com.example.transfera.dto.TransferaWalletDTO.SendMoneyRequestDTO;
 import com.example.transfera.dto.TransferaWalletDTO.TransferaWalletDTO;
 import com.example.transfera.service.transferaWallet.*;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,15 @@ public class TransferaWalletController {
     private final GetTransferaWalletService getTransferaWalletService;
     private final AddMoneyTransferaWalletService addMoneyTransferaWalletService;
     private final CashOutMoneyTransferaWalletService subtractMoneyTransferaWalletService;
+    private final SendMoneyTransferaWalletService sendMoneyTransferaWalletService;
 
-    public TransferaWalletController( GetTransferaWalletService getTransferaWalletService,
-                                      AddMoneyTransferaWalletService addMoneyTransferaWalletService,
-                                      CashOutMoneyTransferaWalletService subtractMoneyTransferaWalletService ) {
+    public TransferaWalletController(GetTransferaWalletService getTransferaWalletService,
+                                     AddMoneyTransferaWalletService addMoneyTransferaWalletService,
+                                     CashOutMoneyTransferaWalletService subtractMoneyTransferaWalletService, SendMoneyTransferaWalletService sendMoneyTransferaWalletService) {
         this.getTransferaWalletService = getTransferaWalletService;
         this.addMoneyTransferaWalletService = addMoneyTransferaWalletService;
         this.subtractMoneyTransferaWalletService = subtractMoneyTransferaWalletService;
+        this.sendMoneyTransferaWalletService = sendMoneyTransferaWalletService;
     }
 
     @GetMapping
@@ -37,5 +40,10 @@ public class TransferaWalletController {
     @PostMapping( "/cash-out" )
     public ResponseEntity<TransferaWalletDTO> cashOut( @RequestBody CashOutRequestDTO request ) {
         return subtractMoneyTransferaWalletService.execute( request );
+    }
+
+    @PostMapping( "/send-money" )
+    public ResponseEntity<TransferaWalletDTO> sendMoney( @RequestBody SendMoneyRequestDTO request ) {
+        return sendMoneyTransferaWalletService.execute( request );
     }
 }

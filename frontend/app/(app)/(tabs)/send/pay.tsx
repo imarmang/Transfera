@@ -4,6 +4,7 @@ import { View, StyleSheet, Pressable, Text, TextInput, FlatList } from 'react-na
 import { useState, useEffect } from 'react';
 import { useSession } from '@/src/context/AuthContext';
 import { searchProfilesRequest, SearchProfileDTO } from '@/src/services/profile.service';
+import { sendMoneyRequest} from '@/src/services/wallet.service';
 
 export default function Pay() {
   const { amount } = useLocalSearchParams<{ amount: string }>();
@@ -14,6 +15,30 @@ export default function Pay() {
   const [selected, setSelected] = useState<SearchProfileDTO | null>( null );
   const [results, setResults] = useState<SearchProfileDTO[]>( [] );
   const [error, setError] = useState( '' );
+  const [submitting, setSubmitting] = useState( false );
+
+  async function handlePay() {
+    if ( !selected || !note ) return;
+    setError( '' );
+    console.log( 'handlePay — recipientUsername:', selected.userName );
+    console.log( 'handlePay — amount:', amount );
+    console.log( 'handlePay — note:', note );
+    try {
+      setSubmitting( true );
+      const result = await sendMoneyRequest( session!, {
+        recipientUsername: selected.userName,
+        amount: Number( amount ),
+        note,
+      } );
+      console.log( 'handlePay — success:', result );
+      router.replace( '/' );
+    } catch ( e: any ) {
+      console.log( 'handlePay — error:', e.message );
+      setError( e.message ?? 'Failed to send money. Please try again.' );
+    } finally {
+      setSubmitting( false );
+    }
+  }
 
   // ─── Debounced search ─────────────────────────────────────────────────────
   useEffect( () => {
@@ -145,11 +170,13 @@ export default function Pay() {
       {/* Pay button */}
       <View style={styles.payButtonContainer}>
         <Pressable
-          style={[styles.payButton, ( !selected || !note ) && styles.payButtonDisabled]}
-          disabled={!selected || !note}
-          onPress={() => setError( 'Pay is not fully yet implemented' )}
+          style={[styles.payButton, ( !selected || !note || submitting ) && styles.payButtonDisabled]}
+          disabled={!selected || !note || submitting}
+          onPress={handlePay}
         >
-          <Text style={styles.payButtonText}>{`Pay $${amount}`}</Text>
+          <Text style={styles.payButtonText}>
+            {submitting ? 'Sending...' : `Pay $${amount}`}
+          </Text>
         </Pressable>
       </View>
 
