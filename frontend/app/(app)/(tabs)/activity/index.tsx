@@ -63,12 +63,6 @@ export default function Activity() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Recent Activity</Text>
         <View style={styles.topBarRight}>
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => setError( 'Search is not yet implemented' )}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
-          </Pressable>
           <Pressable style={styles.topBarIcon} onPress={() => router.push( '/profile' )}>
             <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>

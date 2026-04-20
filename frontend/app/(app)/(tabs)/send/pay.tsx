@@ -1,125 +1,163 @@
 import { colors } from '@/src/themes/colors';
 import { useLocalSearchParams, router } from 'expo-router';
-import { View, StyleSheet, Pressable, Text, TextInput } from 'react-native';
-import { useState } from 'react';
+import { View, StyleSheet, Pressable, Text, TextInput, FlatList } from 'react-native';
+import { useState, useEffect } from 'react';
+import { useSession } from '@/src/context/AuthContext';
+import { searchProfilesRequest, SearchProfileDTO } from '@/src/services/profile.service';
 
 export default function Pay() {
   const { amount } = useLocalSearchParams<{ amount: string }>();
-  const [to, setTo] = useState('');
-  const [note, setNote] = useState('');
-  const [selected, setSelected] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const { session } = useSession();
+
+  const [to, setTo] = useState( '' );
+  const [note, setNote] = useState( '' );
+  const [selected, setSelected] = useState<SearchProfileDTO | null>( null );
+  const [results, setResults] = useState<SearchProfileDTO[]>( [] );
+  const [error, setError] = useState( '' );
+
+  // ─── Debounced search ─────────────────────────────────────────────────────
+  useEffect( () => {
+    if ( selected ) return;
+    if ( to.length < 2 ) {
+      setResults( [] );
+      return;
+    }
+
+    const timer = setTimeout( async () => {
+      try {
+        const data = await searchProfilesRequest( session!, to );
+        setResults( data );
+      } catch {
+        setResults( [] );
+      }
+    }, 300 );
+
+    return () => clearTimeout( timer );
+  }, [to] );
+
+  function handleSelect( profile: SearchProfileDTO ) {
+    setSelected( profile );
+    setTo( profile.userName );
+    setResults( [] );
+  }
+
+  function handleToChange( text: string ) {
+    const cleaned = text.startsWith( '@' ) ? text.slice( 1 ) : text;
+    setTo( cleaned );
+    if ( selected ) setSelected( null );
+  }
+
   return (
     <View style={styles.container}>
+
       {/* Top bar */}
       <View style={styles.topBar}>
         <Pressable style={styles.closeButton} onPress={() => router.back()}>
           <Text style={styles.closeText}>✕</Text>
         </Pressable>
-
-        <Text style={styles.amountText}>${amount}</Text>
-
-        <Pressable style={styles.typeButton}>
-          <Text style={styles.typeButtonText}>Pay</Text>
-        </Pressable>
+        <Text style={styles.amountText}>{`$${amount}`}</Text>
+        <View style={styles.closeButton} />
       </View>
-      <View style={styles.divider}></View>
-      {/* End of top bar */}
+      <View style={styles.divider} />
 
-      {/* Index to and Note */}
+      {/* To field */}
       <View style={styles.fieldRow}>
         <Text style={styles.fieldLabel}>To</Text>
-        <TextInput
-          style={styles.fieldInput}
-          placeholder="Name, $tag, Phone, Email"
-          placeholderTextColor={colors.subtitleText}
-          value={to}
-          onChangeText={setTo}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-      </View>
-
-      <View style={styles.divider}></View>
-
-      <View style={styles.fieldRow}>
-        <Text style={styles.fieldLabel}>For</Text>
-        <TextInput
-          style={styles.fieldInput}
-          placeholder="Note (required)"
-          placeholderTextColor={colors.subtitleText}
-          value={note}
-          onChangeText={setNote}
-        />
-      </View>
-
-      <View style={styles.divider}></View>
-      {/* End of Index to and Note */}
-
-      {/* Suggested */}
-      <View style={styles.suggestedSection}>
-        <Text style={styles.suggestedTitle}>Suggested</Text>
-
-        {/* Fake contacts for now */}
-        <Pressable
-          style={[styles.contactRow, selected === '$anthonycal' && styles.contactRowSelected]}
-          onPress={() => {
-            const tag = '$anthonycal';
-            setSelected(selected === tag ? null : tag);
-            setTo(selected === tag ? '' : tag);
-          }}
-        >
-          <View style={styles.contactAvatar}>
-            <Text style={styles.contactInitials}>AC</Text>
-          </View>
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactName}>Anthony Calore</Text>
-            <Text style={styles.contactHandle}>$anthonycal</Text>
-          </View>
-          <View
-            style={[styles.selectCircle, selected === '$anthonycal' && styles.selectCircleFilled]}
+        <View style={styles.atInputContainer}>
+          <Text style={styles.atPrefix}>@</Text>
+          <TextInput
+            style={styles.fieldInput}
+            placeholder="username"
+            placeholderTextColor={colors.subtitleText}
+            value={to}
+            onChangeText={handleToChange}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
-        </Pressable>
-
-        <Pressable
-          style={[styles.contactRow, selected === '$johndoe' && styles.contactRowSelected]}
-          onPress={() => {
-            setSelected('$johndoe');
-            setTo('$johndoe');
-          }}
-        >
-          <View style={styles.contactAvatar}>
-            <Text style={styles.contactInitials}>JD</Text>
-          </View>
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactName}>John Doe</Text>
-            <Text style={styles.contactHandle}>$johndoe</Text>
-          </View>
-          <View
-            style={[styles.selectCircle, selected === '$johndoe' && styles.selectCircleFilled]}
-          />
-        </Pressable>
+        </View>
       </View>
-      {error ? (
+      <View style={styles.divider} />
+
+      {/* Selected user badge */}
+      {selected && (
+        <>
+          <View style={styles.selectedBadge}>
+            <View style={styles.contactAvatar}>
+              <Text style={styles.contactInitials}>
+                {selected.firstName.charAt( 0 ).toUpperCase()}{selected.lastName.charAt( 0 ).toUpperCase()}              </Text>
+            </View>
+            <View style={styles.contactInfo}>
+              <Text style={styles.contactName}>{selected.firstName} {selected.lastName}</Text>
+              <Text style={styles.contactHandle}>@{selected.userName}</Text>
+            </View>
+            <Pressable onPress={() => { setSelected( null ); setTo( '' ); }}>
+              <Text style={styles.closeText}>✕</Text>
+            </Pressable>
+          </View>
+          <View style={styles.divider} />
+
+          {/* For field */}
+          <View style={styles.fieldRow}>
+            <Text style={styles.fieldLabel}>For</Text>
+            <TextInput
+              style={styles.fieldInput}
+              placeholder="Note (required)"
+              placeholderTextColor={colors.subtitleText}
+              value={note}
+              onChangeText={setNote}
+            />
+          </View>
+          <View style={styles.divider} />
+        </>
+      )}
+
+      {/* Search results — fills remaining space */}
+      {results.length > 0 && (
+        <FlatList
+          data={results}
+          keyExtractor={( item ) => item.userName}
+          renderItem={( { item } ) => (
+            <Pressable style={styles.contactRow} onPress={() => handleSelect( item )}>
+              <View style={styles.contactAvatar}>
+                <Text style={styles.contactInitials}>
+                  {item.firstName.charAt( 0 ).toUpperCase()}{item.lastName.charAt( 0 ).toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactName}>{item.firstName} {item.lastName}</Text>
+                <Text style={styles.contactHandle}>@{item.userName}</Text>
+              </View>
+            </Pressable>
+          )}
+          style={styles.resultsList}
+          contentContainerStyle={styles.resultsContent}
+          keyboardShouldPersistTaps="handled"
+        />
+      )}
+
+      {/* Error */}
+      {!!error && (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
         </View>
-      ) : null}
+      )}
+
+      {/* Pay button */}
       <View style={styles.payButtonContainer}>
         <Pressable
-          // The user must write a note
-          style={[styles.payButton, (!selected || !note) && styles.payButtonDisabled]}
+          style={[styles.payButton, ( !selected || !note ) && styles.payButtonDisabled]}
           disabled={!selected || !note}
-          onPress={() => setError("Pay is not fully yet implemented")}
+          onPress={() => setError( 'Pay is not fully yet implemented' )}
         >
-          <Text style={styles.payButtonText}>Pay ${amount}</Text>
+          <Text style={styles.payButtonText}>{`Pay $${amount}`}</Text>
         </Pressable>
       </View>
+
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create( {
   container: { flex: 1, backgroundColor: colors.background, paddingTop: 60 },
   topBar: {
     flexDirection: 'row',
@@ -131,13 +169,6 @@ const styles = StyleSheet.create({
   closeButton: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   closeText: { fontSize: 18, color: colors.bodyText },
   amountText: { fontSize: 20, fontWeight: '700', color: colors.bodyText },
-  typeButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: colors.card,
-  },
-  typeButtonText: { fontSize: 15, fontWeight: '700', color: colors.bodyText },
   divider: { height: 1, backgroundColor: colors.card },
   fieldRow: {
     flexDirection: 'row',
@@ -147,11 +178,30 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   fieldLabel: { fontSize: 16, fontWeight: '700', color: colors.bodyText, width: 36 },
-
   fieldInput: { flex: 1, fontSize: 16, color: colors.bodyText },
-  suggestedSection: { paddingHorizontal: 20, paddingTop: 24, gap: 4 },
-  suggestedTitle: { fontSize: 22, fontWeight: '800', color: colors.bodyText, marginBottom: 12 },
-  contactRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, gap: 14 },
+  resultsList: {
+    flex: 1,
+  },
+  resultsContent: {
+    paddingBottom: 100,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    gap: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.card,
+  },
+  selectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    gap: 14,
+    backgroundColor: colors.card,
+  },
   contactAvatar: {
     width: 52,
     height: 52,
@@ -160,25 +210,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  contactInitials: { fontSize: 18, fontWeight: '700', color: colors.primaryText },
-  contactInfo: { gap: 2 },
+  contactInitials: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primaryText,
+    textAlign: 'center',
+  },
+  contactInfo: { flex: 1, gap: 2 },
   contactName: { fontSize: 16, fontWeight: '600', color: colors.bodyText },
   contactHandle: { fontSize: 14, color: colors.subtitleText },
-  contactRowSelected: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    marginHorizontal: -10,
-  },
-  selectCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.subtitleText,
-    marginLeft: 'auto',
-  },
-  selectCircleFilled: { backgroundColor: colors.primary, borderColor: colors.primary },
   payButtonContainer: {
     position: 'absolute',
     bottom: 40,
@@ -192,14 +232,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.primary,
   },
-  payButtonDisabled: {
-    backgroundColor: colors.primaryDisabled,
-  },
-  payButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.primaryText,
-  },
+  payButtonDisabled: { backgroundColor: colors.primaryDisabled },
+  payButtonText: { fontSize: 16, fontWeight: '700', color: colors.primaryText },
   errorBox: {
     marginHorizontal: 20,
     marginTop: 12,
@@ -207,4 +241,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colors.errorBackground,
   },
-  errorText: { color: colors.error, fontSize: 14, fontWeight: '600' },});
+  errorText: { color: colors.error, fontSize: 14, fontWeight: '600' },
+  atInputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  atPrefix: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.bodyText,
+  },
+} );

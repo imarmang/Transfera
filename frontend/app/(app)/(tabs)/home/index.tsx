@@ -43,12 +43,6 @@ export default function Index() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Money</Text>
         <View style={styles.topBarRight}>
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => setError('Search is not yet implemented')}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
-          </Pressable>
           <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
             <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>

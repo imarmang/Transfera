@@ -24,3 +24,23 @@ export async function getProfileDataRequest(token: string): Promise<ProfileData>
     phoneNumber: data.phoneNumber,
   };
 }
+
+export type SearchProfileDTO = {
+  userName: string;
+  firstName: string;
+  lastName: string;
+};
+
+export async function searchProfilesRequest(
+  token: string,
+  username: string
+): Promise<SearchProfileDTO[]> {
+  const res = await fetch( `${ API_BASE }/api/v1/profiles/search?username=${ username }`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${ token }` },
+  } );
+
+  if ( !res.ok ) throw new Error( 'Failed to search profiles' );
+
+  return res.json();
+}
