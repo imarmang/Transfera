@@ -31,10 +31,11 @@ export default function Pay() {
         note,
       } );
       console.log( 'handlePay — success:', result );
-      router.replace( '/' );
+      router.dismiss( 2 );
     } catch ( e: any ) {
       console.log( 'handlePay — error:', e.message );
       setError( e.message ?? 'Failed to send money. Please try again.' );
+      setTimeout( () => setError( '' ), 3000 );
     } finally {
       setSubmitting( false );
     }
