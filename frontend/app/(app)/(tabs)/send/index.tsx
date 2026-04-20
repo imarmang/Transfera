@@ -34,13 +34,6 @@ export default function Index() {
         </Pressable>
 
         <View style={styles.topBarRight}>
-          <Pressable
-            style={styles.topBarIcon}
-            onPress={() => setError('Search is not yet implemented')}
-          >
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color={colors.bodyText} />
-          </Pressable>
-
           <Pressable style={styles.topBarIcon} onPress={() => router.push('/profile')}>
             <FontAwesomeIcon icon={faUser} size={20} color={colors.bodyText} />
           </Pressable>
@@ -83,7 +76,11 @@ export default function Index() {
           <Text style={styles.requestButtonText}>Request</Text>
         </Pressable>
 
-        <Pressable style={styles.payButton} onPress={() => router.push('/send/pay')}>
+        <Pressable
+          style={[styles.payButton, Number( amount ) < 1 && styles.payButtonDisabled]}
+          disabled={Number( amount ) < 1}
+          onPress={() => router.push( { pathname: '/send/pay', params: { amount } } )}
+        >
           <Text style={styles.payButtonText}>Pay</Text>
         </Pressable>
       </View>
@@ -169,5 +166,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: 'white',
+  },
+  payButtonDisabled: {
+    backgroundColor: colors.primaryDisabled,
   },
 });
