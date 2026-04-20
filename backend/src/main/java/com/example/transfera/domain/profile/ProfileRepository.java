@@ -20,4 +20,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     // SEARCH USERS BY USERNAME — returns top 10 matches starting with the given string
     List<Profile> findTop10ByUserNameStartingWithIgnoreCase( String userName );
-}
+
+    Optional<Profile> findByUserName( String userName );}

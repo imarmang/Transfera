@@ -63,3 +63,27 @@ export async function cashOutMoneyTransferaWalletRequest( token: string, body: C
 
   return res.json();
 }
+
+export type SendMoneyRequestDTO = {
+  recipientUsername: string;
+  amount: number;
+  note: string;
+}
+
+export async function sendMoneyRequest( token: string, body: SendMoneyRequestDTO ): Promise<TransferaWalletDTO> {
+  const res = await fetch( `${ API_BASE }/api/v1/transfera-wallet/send-money`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${ token }`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify( body ),
+  } );
+
+  if ( !res.ok ) {
+    const data = await res.json();
+    throw new Error( data?.message ?? 'Failed to send money. Please try again.' );
+  }
+
+  return res.json();
+}

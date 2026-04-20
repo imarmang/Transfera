@@ -1,18 +1,32 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, View, Text } from 'react-native';
 import { colors } from '@/src/themes/colors';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import {
   faQrcode,
-  faMagnifyingGlass,
   faUser,
   faDeleteLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { getTransferaWalletRequest } from '@/src/services/wallet.service';
+import { useSession } from '@/src/context/AuthContext';
 
 export default function Index() {
   const [error, setError] = useState('');
   const [amount, setAmount] = useState('0');
+
+  const { session } = useSession();
+  const [balance, setBalance] = useState( 0 );
+  const amountExceedsBalance = Number( amount ) > balance;
+
+
+  useFocusEffect(
+    useCallback( () => {
+      getTransferaWalletRequest( session! )
+        .then( ( data ) => setBalance( data.balance ) )
+        .catch( () => {} );
+    }, [] )
+  );
 
   function handleKey(key: string) {
     if (key === '⌫') setAmount('0');
@@ -28,7 +42,10 @@ export default function Index() {
       <View style={styles.topBar}>
         <Pressable
           style={styles.topBarIcon}
-          onPress={() => setError('QR code is not yet implemented')}
+          onPress={() => {
+            setError('QR code is not yet implemented');
+            setTimeout(() => setError(''), 3000);
+          }}
         >
           <FontAwesomeIcon icon={faQrcode} size={20} color={colors.bodyText} />
         </Pressable>
@@ -71,17 +88,32 @@ export default function Index() {
       <View style={styles.actionButtons}>
         <Pressable
           style={styles.requestButton}
-          onPress={() => setError('Request button is not yet implemented.')}
-        >
+          onPress={() => {
+            setError('Request button is not yet implemented.')
+            setTimeout(() => setError(''), 3000);
+          }}
+
+            >
           <Text style={styles.requestButtonText}>Request</Text>
         </Pressable>
 
+
+
         <Pressable
-          style={[styles.payButton, Number( amount ) < 1 && styles.payButtonDisabled]}
-          disabled={Number( amount ) < 1}
-          onPress={() => router.push( { pathname: '/send/pay', params: { amount } } )}
+          style={[
+            styles.payButton,
+            ( Number( amount ) < 1 || amountExceedsBalance ) && styles.payButtonDisabled
+          ]}
+          disabled={Number( amount ) < 1 || amountExceedsBalance}
+          onPress={() => router.push(
+            { pathname: '/send/pay',
+              params: {
+                amount: parseFloat( amount ).toFixed( 2 )
+            } } )}
         >
-          <Text style={styles.payButtonText}>Pay</Text>
+          <Text style={styles.payButtonText}>
+            {amountExceedsBalance ? 'Insufficient Balance' : 'Pay'}
+          </Text>
         </Pressable>
       </View>
       {/* End of Pay and Request Button */}
