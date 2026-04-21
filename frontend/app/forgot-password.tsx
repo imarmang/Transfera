@@ -79,7 +79,7 @@ export default function ForgotPassword() {
                 disabled={loading}
               >
                 <Text style={styles.primaryButtonText}>
-                  {loading ? 'Sending...' : 'Index Reset Link'}
+                  {loading ? 'Sending...' : 'Send Reset Link'}
                 </Text>
               </Pressable>
             </>

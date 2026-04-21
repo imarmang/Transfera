@@ -138,3 +138,22 @@ export async function googleRegisterRequest(idToken: string): Promise<string> {
   if (!data.token) throw new Error('No token returned from the server');
   return data.token;
 }
+
+// reset the user's password using the token from the email link
+export async function resetPasswordRequest( token: string, newPassword: string ): Promise<string> {
+  const res = await fetch( `${ API_BASE }/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, newPassword }),
+  } );
+
+  const text = await res.text();
+  const data = text ? JSON.parse( text ) : {};
+
+  if ( !res.ok )
+    throw new Error(
+      data?.message ?? 'Failed to reset password. Please try again.'
+    );
+
+  return data.message;
+}
