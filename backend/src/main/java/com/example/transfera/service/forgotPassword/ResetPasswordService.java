@@ -32,7 +32,7 @@ public class ResetPasswordService {
     }
 
     public ResetPasswordResponseDTO execute( String token, String newPassword ) {
-        System.out.println( "REsetPasswordService: received reset request for token: " + token );
+        System.out.println( "ResetPasswordService: received reset request for token: " + token );
 
         Optional<PasswordResetToken> tokenOpt = passwordResetRepository.findByToken( token );
 

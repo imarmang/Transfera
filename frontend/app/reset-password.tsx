@@ -8,12 +8,15 @@ import {
   Platform,
 } from 'react-native';
 import { useState } from 'react';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { colors } from '@/src/themes/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
+import { resetPasswordRequest } from '@/src/services/auth.service';
 
 export default function ResetPassword() {
+  const { token } = useLocalSearchParams<{ token: string }>();
+
   const [newPassword, setNewPassword] = useState( '' );
   const [confirmPassword, setConfirmPassword] = useState( '' );
   const [showNew, setShowNew] = useState( false );
@@ -21,8 +24,9 @@ export default function ResetPassword() {
   const [error, setError] = useState( '' );
   const [loading, setLoading] = useState( false );
 
-  function handleReset() {
+  async function handleReset() {
     setError( '' );
+
     if ( !newPassword || !confirmPassword ) {
       setError( 'Please fill in all fields.' );
       return;
@@ -31,8 +35,20 @@ export default function ResetPassword() {
       setError( 'Passwords do not match.' );
       return;
     }
-    // TODO: wire up API call
-    console.log( 'Reset password with:', newPassword );
+    if ( !token ) {
+      setError( 'Invalid or missing reset token.' );
+      return;
+    }
+
+    try {
+      setLoading( true );
+      await resetPasswordRequest( token, newPassword );
+      router.replace( '/signin' );
+    } catch ( e: any ) {
+      setError( e.message ?? 'Failed to reset password. Please try again.' );
+    } finally {
+      setLoading( false );
+    }
   }
 
   return (
@@ -57,7 +73,7 @@ export default function ResetPassword() {
             <View style={styles.passwordContainer}>
               <TextInput
                 value={newPassword}
-                onChangeText={setNewPassword}
+                onChangeText={( text ) => { setError( '' ); setNewPassword( text ); }}
                 placeholder="••••••••"
                 placeholderTextColor={colors.subtitleText}
                 secureTextEntry={!showNew}
@@ -79,7 +95,7 @@ export default function ResetPassword() {
             <View style={styles.passwordContainer}>
               <TextInput
                 value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                onChangeText={( text ) => { setError( '' ); setConfirmPassword( text ); }}
                 placeholder="••••••••"
                 placeholderTextColor={colors.subtitleText}
                 secureTextEntry={!showConfirm}

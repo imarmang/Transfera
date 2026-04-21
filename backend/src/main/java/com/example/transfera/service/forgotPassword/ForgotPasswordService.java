@@ -24,8 +24,6 @@ public class ForgotPasswordService {
     private final UserCredentialsRepository userCredentialsRepository;
     private final PasswordResetRepository passwordResetRepository;
     private final JavaMailSender mailSender;
-    @Value("${app.frontend.url}")
-    private String frontEndUrl;
 
     @Value("${app.mail.from}")
     private String from;
@@ -46,7 +44,7 @@ public class ForgotPasswordService {
 
         // Check if the user exists
         if ( userOpt.isEmpty() ) {
-            System.out.println("ForgotPasswordService: no user found with email: " + email );
+            System.out.println( "ForgotPasswordService: no user found with email: " + email );
             throw new UserNotFound();
         }
 
@@ -56,9 +54,9 @@ public class ForgotPasswordService {
         PasswordResetToken passwordResetToken = new PasswordResetToken( user );
 
         passwordResetRepository.save( passwordResetToken );
-        System.out.println("ForgotPasswordService: token saved: " + passwordResetToken.getToken() );
+        System.out.println( "ForgotPasswordService: token saved: " + passwordResetToken.getToken() );
 
-        String resetLink = frontEndUrl + "/reset_password?token=" + passwordResetToken.getToken();
+        String resetLink = "https://transfera-redirect-web.vercel.app?token=" + passwordResetToken.getToken();
         System.out.println( "ForgotPasswordService: reset link generated: " + resetLink );
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -73,7 +71,7 @@ public class ForgotPasswordService {
         mailSender.send( mailMessage );
 
         System.out.println( "ForgotPasswordService: email sent successfully to: " + email );
-        return new ForgotPasswordResponseDTO("Password reset link sent to " + email);
+        return new ForgotPasswordResponseDTO( "Password reset link sent to " + email);
     }
 
 }
