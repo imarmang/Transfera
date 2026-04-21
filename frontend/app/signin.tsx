@@ -199,10 +199,6 @@ export default function SignIn() {
             {"Don't have an account?"} <Text style={styles.registerTextBold}>Create One</Text>
           </Text>
         </Pressable>
-
-        <Pressable onPress={() => router.push( '/reset-password' )}>
-          <Text>Test Reset Password</Text>
-        </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
