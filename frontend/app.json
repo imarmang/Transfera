@@ -12,12 +12,14 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Transfera-Frontend",
       "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
               "com.googleusercontent.apps.66338557627-5j50sd4svj5nnioeettkf2b65qbo2b4r",
               "transferafrontend"
-
             ]
           }
         ]
