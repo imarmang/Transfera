@@ -23,12 +23,14 @@ jobs:
 
       - name: Stop running app on EC2
         uses: appleboy/ssh-action@master
+        continue-on-error: true
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             pkill -f 'Transfera' || true
+            sleep 2
 
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@master
@@ -51,3 +53,5 @@ jobs:
               --spring.profiles.active=prod \
               --spring.config.additional-location=/home/ubuntu/app/ \
               > /home/ubuntu/app/logs.log 2>&1 &
+            sleep 5
+            echo "App started"
