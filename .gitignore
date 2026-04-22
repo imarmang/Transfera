@@ -56,7 +56,6 @@ HELP.md
 build/
 backend/.gradle/
 backend/build/
-backend/src/main/resources/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -93,6 +92,5 @@ out/
 .vscode/
 
 backend/src/main/resources/application-prod.properties
-backend/src/main/resources/application.properties
 backend/src/main/resources/application-local.properties
 backend/src/main/resources/application.yml
