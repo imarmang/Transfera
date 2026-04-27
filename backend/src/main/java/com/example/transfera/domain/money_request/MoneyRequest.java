@@ -34,11 +34,11 @@ public class MoneyRequest {
     @Column( name = "note" )
     private String note;
 
-    @Column( name = "peer_name" )
-    private String peerName;
+    @Column(name = "requester", nullable = false)
+    private String requester;   // username of whoever sent the request
 
-    @Column( name = "is_payer" )
-    private boolean isPayer;
+    @Column(name = "requestee", nullable = false)
+    private String requestee;   // username of whoever was asked to pay
 
     @Enumerated( EnumType.STRING )
     @Column( name = "status", nullable = false )

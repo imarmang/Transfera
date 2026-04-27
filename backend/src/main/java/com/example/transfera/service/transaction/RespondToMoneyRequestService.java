@@ -4,8 +4,6 @@ import com.example.transfera.Command;
 import com.example.transfera.domain.money_request.MoneyRequest;
 import com.example.transfera.domain.money_request.MoneyRequestRepository;
 import com.example.transfera.domain.money_request.MoneyRequestStatus;
-import com.example.transfera.domain.profile.Profile;
-import com.example.transfera.domain.profile.ProfileRepository;
 import com.example.transfera.domain.transaction.TransactionFactory;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
@@ -25,16 +23,13 @@ public class RespondToMoneyRequestService implements Command<RespondToMoneyReque
     private final MoneyRequestRepository moneyRequestRepository;
     private final TransferaWalletRepository transferaWalletRepository;
     private final CreateTransactionService createTransactionService;
-    private final ProfileRepository profileRepository;
 
     public RespondToMoneyRequestService( MoneyRequestRepository moneyRequestRepository,
                                          TransferaWalletRepository transferaWalletRepository,
-                                         CreateTransactionService createTransactionService,
-                                         ProfileRepository profileRepository ) {
+                                         CreateTransactionService createTransactionService ) {
         this.moneyRequestRepository = moneyRequestRepository;
         this.transferaWalletRepository = transferaWalletRepository;
         this.createTransactionService = createTransactionService;
-        this.profileRepository = profileRepository;
     }
 
     @Override
@@ -61,11 +56,6 @@ public class RespondToMoneyRequestService implements Command<RespondToMoneyReque
 
         TransferaWallet requesterWallet = moneyRequest.getRequesterWallet();
         UUID moneyRequestId = moneyRequest.getMoneyRequestId();
-        String payerUsername = profileRepository
-                .findByUserCredentialsEmail( payerEmail )
-                .map( Profile::getUserName )
-                .orElse( payerEmail );
-        String requesterUsername = moneyRequest.getPeerName();
 
         if ( input.getResponse() == MoneyRequestStatus.APPROVED ) {
 
@@ -80,18 +70,13 @@ public class RespondToMoneyRequestService implements Command<RespondToMoneyReque
             transferaWalletRepository.save( requesterWallet );
 
             createTransactionService.execute(
-                    TransactionFactory.requestApprovedSend( payerWallet, moneyRequest.getAmount(), requesterUsername, moneyRequestId )
+                    TransactionFactory.requestApprovedSend( payerWallet, moneyRequest.getAmount(), moneyRequest.getRequester(), moneyRequestId )
             );
             createTransactionService.execute(
-                    TransactionFactory.requestApprovedReceived( requesterWallet, moneyRequest.getAmount(), payerUsername, moneyRequestId )
-            );
-
-        } else if ( input.getResponse() == MoneyRequestStatus.DECLINED ) {
-
-            createTransactionService.execute(
-                    TransactionFactory.requestDeclined( payerWallet, moneyRequest.getAmount(), requesterUsername, moneyRequestId )
+                    TransactionFactory.requestApprovedReceived( requesterWallet, moneyRequest.getAmount(), moneyRequest.getRequestee(), moneyRequestId )
             );
         }
+        // DECLINED: no transaction created — no money moved, MoneyRequest status is the record
 
         moneyRequest.setStatus( input.getResponse() );
         moneyRequestRepository.save( moneyRequest );

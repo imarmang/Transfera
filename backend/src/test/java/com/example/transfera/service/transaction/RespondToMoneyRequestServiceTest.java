@@ -3,8 +3,6 @@ package com.example.transfera.service.transaction;
 import com.example.transfera.domain.money_request.MoneyRequest;
 import com.example.transfera.domain.money_request.MoneyRequestRepository;
 import com.example.transfera.domain.money_request.MoneyRequestStatus;
-import com.example.transfera.domain.profile.Profile;
-import com.example.transfera.domain.profile.ProfileRepository;
 import com.example.transfera.domain.transaction.Transaction;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
@@ -44,9 +42,6 @@ class RespondToMoneyRequestServiceTest {
     @Mock
     private CreateTransactionService createTransactionService;
 
-    @Mock
-    private ProfileRepository profileRepository;
-
     @InjectMocks
     private RespondToMoneyRequestService respondToMoneyRequestService;
 
@@ -82,10 +77,6 @@ class RespondToMoneyRequestServiceTest {
         return wallet;
     }
 
-    private Profile buildProfile( String userName, UserCredentials user ) {
-        return new Profile( userName, "First", "Last", "5551234567", user );
-    }
-
     private MoneyRequest buildMoneyRequest( TransferaWallet requesterWallet,
                                             TransferaWallet payerWallet,
                                             BigDecimal amount,
@@ -94,7 +85,8 @@ class RespondToMoneyRequestServiceTest {
                 .moneyRequestId( MONEY_REQUEST_ID )
                 .amount( amount )
                 .note( "Dinner split" )
-                .peerName( REQUESTER_USERNAME )
+                .requester( REQUESTER_USERNAME )
+                .requestee( PAYER_USERNAME )
                 .status( status )
                 .requesterWallet( requesterWallet )
                 .payerWallet( payerWallet )
@@ -129,14 +121,11 @@ class RespondToMoneyRequestServiceTest {
         TransferaWallet requesterWallet = buildWallet( REQUESTER_WALLET_ID, requesterUser, new BigDecimal( "0.00" ) );
 
         MoneyRequest moneyRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.PENDING );
-        Profile payerProfile = buildProfile( PAYER_USERNAME, payerUser );
 
         when( moneyRequestRepository.findById( MONEY_REQUEST_ID ) )
                 .thenReturn( Optional.of( moneyRequest ) );
         when( transferaWalletRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
                 .thenReturn( Optional.of( payerWallet ) );
-        when( profileRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
-                .thenReturn( Optional.of( payerProfile ) );
         when( transferaWalletRepository.save( any( TransferaWallet.class ) ) )
                 .thenAnswer( inv -> inv.getArgument( 0 ) );
 
@@ -160,14 +149,11 @@ class RespondToMoneyRequestServiceTest {
         TransferaWallet requesterWallet = buildWallet( REQUESTER_WALLET_ID, requesterUser, new BigDecimal( "0.00" ) );
 
         MoneyRequest moneyRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.PENDING );
-        Profile payerProfile = buildProfile( PAYER_USERNAME, payerUser );
 
         when( moneyRequestRepository.findById( MONEY_REQUEST_ID ) )
                 .thenReturn( Optional.of( moneyRequest ) );
         when( transferaWalletRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
                 .thenReturn( Optional.of( payerWallet ) );
-        when( profileRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
-                .thenReturn( Optional.of( payerProfile ) );
         when( transferaWalletRepository.save( any( TransferaWallet.class ) ) )
                 .thenAnswer( inv -> inv.getArgument( 0 ) );
 
@@ -188,14 +174,11 @@ class RespondToMoneyRequestServiceTest {
         TransferaWallet requesterWallet = buildWallet( REQUESTER_WALLET_ID, requesterUser, new BigDecimal( "0.00" ) );
 
         MoneyRequest moneyRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.PENDING );
-        Profile payerProfile = buildProfile( PAYER_USERNAME, payerUser );
 
         when( moneyRequestRepository.findById( MONEY_REQUEST_ID ) )
                 .thenReturn( Optional.of( moneyRequest ) );
         when( transferaWalletRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
                 .thenReturn( Optional.of( payerWallet ) );
-        when( profileRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
-                .thenReturn( Optional.of( payerProfile ) );
         when( transferaWalletRepository.save( any( TransferaWallet.class ) ) )
                 .thenAnswer( inv -> inv.getArgument( 0 ) );
 
@@ -207,8 +190,8 @@ class RespondToMoneyRequestServiceTest {
     }
 
     @Test
-    void execute_decline_updatesStatusAndCreatesOneTransaction() {
-        // Verifies that declining creates one DECLINED transaction and updates status.
+    void execute_decline_updatesStatusAndCreatesNoTransaction() {
+        // Verifies that declining updates status and creates no transaction (no money moved).
         UserCredentials payerUser = buildUser( PAYER_EMAIL );
         UserCredentials requesterUser = buildUser( REQUESTER_EMAIL );
 
@@ -227,7 +210,7 @@ class RespondToMoneyRequestServiceTest {
         );
 
         assertThat( moneyRequest.getStatus() ).isEqualTo( MoneyRequestStatus.DECLINED );
-        verify( createTransactionService, times( 1 ) ).execute( any( Transaction.class ) );
+        verify( createTransactionService, never() ).execute( any( Transaction.class ) );
         verify( transferaWalletRepository, never() ).save( any( TransferaWallet.class ) );
     }
 
@@ -330,14 +313,11 @@ class RespondToMoneyRequestServiceTest {
         TransferaWallet requesterWallet = buildWallet( REQUESTER_WALLET_ID, requesterUser, new BigDecimal( "0.00" ) );
 
         MoneyRequest moneyRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.PENDING );
-        Profile payerProfile = buildProfile( PAYER_USERNAME, payerUser );
 
         when( moneyRequestRepository.findById( MONEY_REQUEST_ID ) )
                 .thenReturn( Optional.of( moneyRequest ) );
         when( transferaWalletRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
                 .thenReturn( Optional.of( payerWallet ) );
-        when( profileRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
-                .thenReturn( Optional.of( payerProfile ) );
 
         assertThatThrownBy( () -> respondToMoneyRequestService.execute(
                 buildResponse( MONEY_REQUEST_ID, MoneyRequestStatus.APPROVED )
@@ -381,16 +361,12 @@ class RespondToMoneyRequestServiceTest {
 
         TransferaWallet payerWallet = buildWallet( PAYER_WALLET_ID, payerUser, new BigDecimal( "100.00" ) );
         TransferaWallet requesterWallet = buildWallet( REQUESTER_WALLET_ID, requesterUser, new BigDecimal( "0.00" ) );
-        Profile payerProfile = buildProfile( PAYER_USERNAME, payerUser );
 
         when( transferaWalletRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
                 .thenReturn( Optional.of( payerWallet ) );
-        when( profileRepository.findByUserCredentialsEmail( PAYER_EMAIL ) )
-                .thenReturn( Optional.of( payerProfile ) );
         when( transferaWalletRepository.save( any( TransferaWallet.class ) ) )
                 .thenAnswer( inv -> inv.getArgument( 0 ) );
 
-        // First call returns PENDING, subsequent calls return APPROVED (already responded)
         MoneyRequest pendingRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.PENDING );
         MoneyRequest approvedRequest = buildMoneyRequest( requesterWallet, payerWallet, new BigDecimal( "50.00" ), MoneyRequestStatus.APPROVED );
 

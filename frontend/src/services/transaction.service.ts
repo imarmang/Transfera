@@ -22,8 +22,8 @@ export type MoneyRequestDTO = {
   amount: number;
   note: string | null;
   status: MoneyRequestStatus;
-  peerName: string;
-  payer: boolean;
+  requester: string;
+  requestee: string;
 };
 
 export type ActivityFeedDTO = {

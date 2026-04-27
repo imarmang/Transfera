@@ -11,7 +11,8 @@ public enum ErrorMessages {
     GOOGLE_AUTH_FAILED( "Google authentication failed" ),
     LINKED_ACCOUNT_EXISTS( "This bank information is already linked to your account" ),
     LINKED_ACCOUNT_DOES_NOT_EXIST( "The bank account you requested to pull funds from doesn't exist" ),
-    INSUFFICIENT_BALANCE_TRANSFERA_WALLET( "Insufficient balance to complete this transaction" );
+    INSUFFICIENT_BALANCE_TRANSFERA_WALLET( "Insufficient balance to complete this transaction" ),
+    REQUEST_MONEY_FROM_YOURSELF_ERROR( "You cannot request money from yourself." );
 
 
 

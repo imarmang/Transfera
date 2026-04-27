@@ -15,16 +15,16 @@ public class MoneyRequestDTO {
     private BigDecimal amount;
     private String note;
     private MoneyRequestStatus status;
-    private String peerName;
-    private boolean isPayer;
+    private String requester;
+    private String requestee;
 
-    public MoneyRequestDTO( MoneyRequest moneyRequest, UUID loggedInWalletId ) {
+    public MoneyRequestDTO(MoneyRequest moneyRequest) {
         this.moneyRequestId = moneyRequest.getMoneyRequestId();
         this.createdAt = moneyRequest.getCreatedAt();
         this.amount = moneyRequest.getAmount();
         this.note = moneyRequest.getNote();
         this.status = moneyRequest.getStatus();
-        this.peerName = moneyRequest.getPeerName();
-        this.isPayer = moneyRequest.getPayerWallet().getId().equals( loggedInWalletId );
+        this.requester = moneyRequest.getRequester();
+        this.requestee = moneyRequest.getRequestee();
     }
 }

@@ -9,6 +9,7 @@ import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
 import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.dto.MoneyRequestDTO.CreateMoneyRequestDTO;
 import com.example.transfera.dto.MoneyRequestDTO.MoneyRequestDTO;
+import com.example.transfera.exceptions.customExceptions.RequestMoneyFromYourself;
 import com.example.transfera.exceptions.customExceptions.TransferaWalletNotFoundException;
 import com.example.transfera.exceptions.customExceptions.UserNotFound;
 import org.junit.jupiter.api.BeforeEach;
@@ -137,8 +138,8 @@ class CreateMoneyRequestServiceTest {
     }
 
     @Test
-    void execute_happyPath_peerNameIsRequesterUsername() {
-        // Verifies that the peerName on the saved request is the requester's username.
+    void execute_happyPath_requesterAndRequesteeAreSetCorrectly() {
+        // Verifies that requester is set to the requester's username and requestee to the payer's username.
         UserCredentials requesterUser = buildUser( REQUESTER_EMAIL );
         UserCredentials payerUser = buildUser( PAYER_EMAIL );
 
@@ -163,7 +164,8 @@ class CreateMoneyRequestServiceTest {
                 buildRequest( PAYER_USERNAME, new BigDecimal( "50.00" ), "Dinner split" )
         );
 
-        assertThat( response.getBody().getPeerName() ).isEqualTo( REQUESTER_USERNAME );
+        assertThat( response.getBody().getRequester() ).isEqualTo( REQUESTER_USERNAME );
+        assertThat( response.getBody().getRequestee() ).isEqualTo( PAYER_USERNAME );
     }
 
     @Test
@@ -208,12 +210,10 @@ class CreateMoneyRequestServiceTest {
                 .thenReturn( Optional.of( requesterWallet ) );
         when( profileRepository.findByUserName( REQUESTER_USERNAME ) )
                 .thenReturn( Optional.of( requesterProfile ) );
-        when( transferaWalletRepository.findByUserCredentialsEmail( REQUESTER_EMAIL ) )
-                .thenReturn( Optional.of( requesterWallet ) );
 
         assertThatThrownBy( () -> createMoneyRequestService.execute(
                 buildRequest( REQUESTER_USERNAME, new BigDecimal( "50.00" ), "" )
-        ) ).isInstanceOf( IllegalArgumentException.class )
+        ) ).isInstanceOf( RequestMoneyFromYourself.class )
                 .hasMessage( "You cannot request money from yourself." );
 
         verify( moneyRequestRepository, never() ).save( any() );

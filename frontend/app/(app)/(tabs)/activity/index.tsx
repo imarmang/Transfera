@@ -13,6 +13,7 @@ import {
   MoneyRequestDTO,
   ActivityFeedDTO,
 } from '@/src/services/transaction.service';
+import { getProfileDataRequest } from '@/src/services/profile.service';
 
 export default function Activity() {
   const { session } = useSession();
@@ -27,12 +28,18 @@ export default function Activity() {
     }, [] )
   );
 
+  const [ currentUsername, setCurrentUsername ] = useState<string | null>( null );
+
   async function fetchFeed() {
     setLoading( true );
     setError( '' );
     try {
-      const data = await getTransactionHistoryRequest( session! );
+      const [ data, profile ] = await Promise.all( [
+        getTransactionHistoryRequest( session! ),
+        getProfileDataRequest( session! ),
+      ] );
       setFeed( data );
+      setCurrentUsername( profile.username );
     } catch {
       setError( 'Failed to load activity.' );
     } finally {
@@ -126,45 +133,48 @@ export default function Activity() {
       {!loading && feed.pendingRequests.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Pending Requests</Text>
-          {feed.pendingRequests.map( ( request: MoneyRequestDTO ) => (
-            <View key={request.moneyRequestId} style={styles.requestItem}>
-              <View style={styles.requestIcon}>
-                <FontAwesomeIcon icon={faClockRotateLeft} size={18} color="white" />
-              </View>
-              <View style={styles.requestDetails}>
-                <Text style={styles.transactionName}>
-                  {request.payer
-                    ? `${ request.peerName } is requesting $$${ request.amount.toFixed( 2 ) }`
-                    : `You requested $${ request.amount.toFixed( 2 ) } from ${ request.peerName }`}
+          {feed.pendingRequests.map( ( request: MoneyRequestDTO ) => {
+            const isRequester = request.requester === currentUsername;
+            return (
+              <View key={request.moneyRequestId} style={styles.requestItem}>
+                <View style={styles.requestIcon}>
+                  <FontAwesomeIcon icon={faClockRotateLeft} size={18} color="white" />
+                </View>
+                <View style={styles.requestDetails}>
+                  <Text style={styles.transactionName}>
+                    {isRequester
+                      ? `You requested $${ request.amount.toFixed( 2 ) } from ${ request.requestee }`
+                      : `${ request.requester } is requesting $${ request.amount.toFixed( 2 ) }`}
+                  </Text>
+                  {request.note ? <Text style={styles.requestNote}>{request.note}</Text> : null}
+                  <Text style={styles.transactionDate}>{formatDate( request.createdAt )}</Text>
+                  {!isRequester && (
+                    <View style={styles.requestActions}>
+                      <Pressable
+                        style={[styles.actionButton, styles.approveButton]}
+                        onPress={() => handleRespond( request.moneyRequestId, 'APPROVED' )}
+                        disabled={respondingId === request.moneyRequestId}
+                      >
+                        {respondingId === request.moneyRequestId
+                          ? <ActivityIndicator size="small" color="white" />
+                          : <Text style={styles.actionButtonText}>Approve</Text>}
+                      </Pressable>
+                      <Pressable
+                        style={[styles.actionButton, styles.declineButton]}
+                        onPress={() => handleRespond( request.moneyRequestId, 'DECLINED' )}
+                        disabled={respondingId === request.moneyRequestId}
+                      >
+                        <Text style={styles.actionButtonText}>Decline</Text>
+                      </Pressable>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.transactionAmount}>
+                  ${request.amount.toFixed( 2 )}
                 </Text>
-                {request.note ? <Text style={styles.requestNote}>{request.note}</Text> : null}
-                <Text style={styles.transactionDate}>{formatDate( request.createdAt )}</Text>
-                {request.payer && (
-                  <View style={styles.requestActions}>
-                    <Pressable
-                      style={[styles.actionButton, styles.approveButton]}
-                      onPress={() => handleRespond( request.moneyRequestId, 'APPROVED' )}
-                      disabled={respondingId === request.moneyRequestId}
-                    >
-                      {respondingId === request.moneyRequestId
-                        ? <ActivityIndicator size="small" color="white" />
-                        : <Text style={styles.actionButtonText}>Approve</Text>}
-                    </Pressable>
-                    <Pressable
-                      style={[styles.actionButton, styles.declineButton]}
-                      onPress={() => handleRespond( request.moneyRequestId, 'DECLINED' )}
-                      disabled={respondingId === request.moneyRequestId}
-                    >
-                      <Text style={styles.actionButtonText}>Decline</Text>
-                    </Pressable>
-                  </View>
-                )}
               </View>
-              <Text style={styles.transactionAmount}>
-                ${request.amount.toFixed( 2 )}
-              </Text>
-            </View>
-          ) )}
+            );
+          } )}
         </View>
       )}
 

@@ -54,7 +54,7 @@ public class GetTransactionsHistoryService implements Query<Void, ActivityFeedDT
                 .findAllByRequesterWallet_IdOrPayerWallet_Id( transferaWallet.getId(), transferaWallet.getId() )
                 .stream()
                 .filter( r -> r.getStatus() == MoneyRequestStatus.PENDING )
-                .map( r -> new MoneyRequestDTO( r, transferaWallet.getId() ) )
+                .map( MoneyRequestDTO::new )
                 .toList();
 
         return ResponseEntity.ok( new ActivityFeedDTO( pendingRequests, transactions ) );

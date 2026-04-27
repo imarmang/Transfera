@@ -9,6 +9,7 @@ import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 import com.example.transfera.domain.transfera_wallet.TransferaWalletRepository;
 import com.example.transfera.dto.MoneyRequestDTO.CreateMoneyRequestDTO;
 import com.example.transfera.dto.MoneyRequestDTO.MoneyRequestDTO;
+import com.example.transfera.exceptions.customExceptions.RequestMoneyFromYourself;
 import com.example.transfera.exceptions.customExceptions.TransferaWalletNotFoundException;
 import com.example.transfera.exceptions.customExceptions.UserNotFound;
 import jakarta.transaction.Transactional;
@@ -52,24 +53,25 @@ public class CreateMoneyRequestService implements Command<CreateMoneyRequestDTO,
                 .orElseThrow( TransferaWalletNotFoundException::new );
 
         if ( requesterWallet.getId().equals( payerWallet.getId() ) ) {
-            throw new IllegalArgumentException( "You cannot request money from yourself." );
+            throw new RequestMoneyFromYourself();
         }
 
         String requesterUsername = profileRepository
-                .findByUserCredentialsEmail( requesterEmail )
-                .map( Profile::getUserName )
-                .orElse( requesterEmail );
+                .findByUserCredentialsEmail(requesterEmail)
+                .map(Profile::getUserName)
+                .orElse(requesterEmail);
 
         MoneyRequest moneyRequest = MoneyRequest.builder()
-                .amount( input.getAmount() )
-                .note( input.getNote() )
-                .peerName( requesterUsername )
-                .requesterWallet( requesterWallet )
-                .payerWallet( payerWallet )
+                .amount(input.getAmount())
+                .note(input.getNote())
+                .requester(requesterUsername)
+                .requestee(payerProfile.getUserName())
+                .requesterWallet(requesterWallet)
+                .payerWallet(payerWallet)
                 .build();
 
-        moneyRequestRepository.save( moneyRequest );
+        moneyRequestRepository.save(moneyRequest);
 
-        return ResponseEntity.ok( new MoneyRequestDTO( moneyRequest, requesterWallet.getId() ) );
+        return ResponseEntity.ok( new MoneyRequestDTO( moneyRequest ) );
     }
 }
