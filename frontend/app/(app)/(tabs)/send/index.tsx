@@ -87,17 +87,15 @@ export default function Index() {
       {/* Pay and Request Button */}
       <View style={styles.actionButtons}>
         <Pressable
-          style={styles.requestButton}
-          onPress={() => {
-            setError('Request button is not yet implemented.')
-            setTimeout(() => setError(''), 3000);
-          }}
-
-            >
+          style={[ styles.requestButton, Number( amount ) < 1 && styles.requestButtonDisabled ]}
+          disabled={Number( amount ) < 1}
+          onPress={() => router.push( {
+            pathname: '/send/request',
+            params: { amount: parseFloat( amount ).toFixed( 2 ) }
+          } )}
+        >
           <Text style={styles.requestButtonText}>Request</Text>
         </Pressable>
-
-
 
         <Pressable
           style={[
@@ -201,5 +199,8 @@ const styles = StyleSheet.create({
   },
   payButtonDisabled: {
     backgroundColor: colors.primaryDisabled,
+  },
+  requestButtonDisabled: {
+    opacity: 0.5,
   },
 });

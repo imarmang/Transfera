@@ -22,30 +22,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
-//    @Override
-//    protected void doFilterInternal( HttpServletRequest request,
-//                                     HttpServletResponse response,
-//                                     FilterChain filterChain ) throws ServletException, IOException {
-//
-//        String authHeader = request.getHeader( "Authorization" );
-//        String token = null;
-//
-//        // header: Authorization  Bearer[jwt]
-//        if ( authHeader != null && authHeader.startsWith( "Bearer " ) ) {
-//            token = authHeader.substring( 7 );
-//        }
-//
-//        if ( token != null && jwtUtil.isTokenValid( token ) && !tokenBlacklistService.isBlacklisted( token ) ) {
-//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-//                    jwtUtil.getClaims( token ).getSubject(),
-//                    null,  // VERIFIED CREDENTIALS WHEN CALLING isTokenValid()
-//                    Collections.emptyList()  // roles and authorities
-//            );
-//            SecurityContextHolder.getContext().setAuthentication( authentication );
-//        }
-//        filterChain.doFilter( request, response );
-//    }
-
     @Override
     protected void doFilterInternal( HttpServletRequest request,
                                      HttpServletResponse response,

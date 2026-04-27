@@ -4,6 +4,7 @@ import com.example.transfera.domain.linked_bank_account.LinkedBankAccount;
 import com.example.transfera.domain.transfera_wallet.TransferaWallet;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 // USE THE FACTORY PATTERN TO CREATE THE DIFFERENT TYPES OF TRANSACTIONS
 public class TransactionFactory {
@@ -65,5 +66,50 @@ public class TransactionFactory {
                 .peerName( peerName )
                 .build();
 
+    }
+
+    // When a money request is approved — sender side
+    public static Transaction requestApprovedSend( TransferaWallet wallet,
+                                                   BigDecimal amount,
+                                                   String peerName,
+                                                   UUID moneyRequestId ) {
+        return Transaction.builder()
+                .transferaWallet( wallet )
+                .amount( amount )
+                .type( TransactionType.SEND )
+                .status( TransactionStatus.COMPLETED )
+                .peerName( peerName )
+                .moneyRequestId( moneyRequestId )
+                .build();
+    }
+
+    // When a money request is approved — receiver side
+    public static Transaction requestApprovedReceived( TransferaWallet wallet,
+                                                       BigDecimal amount,
+                                                       String peerName,
+                                                       UUID moneyRequestId ) {
+        return Transaction.builder()
+                .transferaWallet( wallet )
+                .amount( amount )
+                .type( TransactionType.RECEIVED )
+                .status( TransactionStatus.COMPLETED )
+                .peerName( peerName )
+                .moneyRequestId( moneyRequestId )
+                .build();
+    }
+
+    // When a money request is declined
+    public static Transaction requestDeclined( TransferaWallet wallet,
+                                               BigDecimal amount,
+                                               String peerName,
+                                               UUID moneyRequestId ) {
+        return Transaction.builder()
+                .transferaWallet( wallet )
+                .amount( amount )
+                .type( TransactionType.RECEIVED )
+                .status( TransactionStatus.DECLINED )
+                .peerName( peerName )
+                .moneyRequestId( moneyRequestId )
+                .build();
     }
 }
