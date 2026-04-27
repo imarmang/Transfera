@@ -52,4 +52,8 @@ public class Transaction {
 
     @Column( name = "peer_name" )
     private String peerName;
+
+    // reference to the request table
+    @Column( name = "money_request_id" )
+    private UUID moneyRequestId;
 }

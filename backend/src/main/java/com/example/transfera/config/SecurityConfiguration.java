@@ -60,6 +60,10 @@ public class SecurityConfiguration {
                             "/auth/reset-password",
                             "/auth2/google",
                             "/auth2/google/register",
+                            // TEST
+                            "/api/v1/transaction/history",
+                            "/api/v1/transaction/request",
+                            "/api/v1/transaction/request/respond",
 
                             // USED IN SWAGGER
                             "/swagger-ui/**",

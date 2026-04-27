@@ -48,4 +48,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInsufficientBalanceException( InsufficientBalanceTransferaWalletException exception ) {
         return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( new ErrorResponse( exception.getMessage() ) );
     }
+
+    @ExceptionHandler( RequestMoneyFromYourself.class )
+    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException( RequestMoneyFromYourself exception ) {
+        return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( new ErrorResponse( exception.getMessage() ) );
+    }
+
 }

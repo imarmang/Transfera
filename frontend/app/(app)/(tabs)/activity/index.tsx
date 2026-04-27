@@ -1,28 +1,63 @@
-import { ScrollView, Text, View, StyleSheet, Pressable } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { colors } from '@/src/themes/colors';
 import { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { faMagnifyingGlass, faUser, faArrowUp, faArrowDown, faBuildingColumns } from '@fortawesome/free-solid-svg-icons';
+import { faBuildingColumns, faArrowUp, faArrowDown, faUser, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSession } from '@/src/context/AuthContext';
-import { getTransactionHistoryRequest, TransactionDTO, TransactionType } from '@/src/services/transaction.service';
+import {
+  getTransactionHistoryRequest,
+  respondToMoneyRequestService,
+  TransactionDTO,
+  TransactionType,
+  MoneyRequestDTO,
+  ActivityFeedDTO,
+} from '@/src/services/transaction.service';
+import { getProfileDataRequest } from '@/src/services/profile.service';
 
 export default function Activity() {
   const { session } = useSession();
-  const [transactions, setTransactions] = useState<TransactionDTO[]>( [] );
-  const [loading, setLoading] = useState( true );
-  const [error, setError] = useState( '' );
+  const [ feed, setFeed ] = useState<ActivityFeedDTO>( { pendingRequests: [], transactions: [] } );
+  const [ loading, setLoading ] = useState( true );
+  const [ error, setError ] = useState( '' );
+  const [ respondingId, setRespondingId ] = useState<string | null>( null );
 
   useFocusEffect(
     useCallback( () => {
-      setLoading( true );
-      setError( '' );
-      getTransactionHistoryRequest( session! )
-        .then( setTransactions )
-        .catch( () => setError( 'Failed to load transactions.' ) )
-        .finally( () => setLoading( false ) );
+      fetchFeed();
     }, [] )
   );
+
+  const [ currentUsername, setCurrentUsername ] = useState<string | null>( null );
+
+  async function fetchFeed() {
+    setLoading( true );
+    setError( '' );
+    try {
+      const [ data, profile ] = await Promise.all( [
+        getTransactionHistoryRequest( session! ),
+        getProfileDataRequest( session! ),
+      ] );
+      setFeed( data );
+      setCurrentUsername( profile.username );
+    } catch {
+      setError( 'Failed to load activity.' );
+    } finally {
+      setLoading( false );
+    }
+  }
+
+  async function handleRespond( moneyRequestId: string, response: 'APPROVED' | 'DECLINED' ) {
+    setRespondingId( moneyRequestId );
+    try {
+      await respondToMoneyRequestService( session!, { moneyRequestId, response } );
+      await fetchFeed();
+    } catch {
+      setError( 'Failed to respond to request.' );
+    } finally {
+      setRespondingId( null );
+    }
+  }
 
   function getIcon( type: TransactionType ) {
     switch ( type ) {
@@ -31,7 +66,6 @@ export default function Activity() {
       case 'SEND': return faArrowUp;
       case 'RECEIVED': return faArrowDown;
       default: return faBuildingColumns;
-
     }
   }
 
@@ -39,8 +73,12 @@ export default function Activity() {
     switch ( transaction.transactionType ) {
       case 'ADD_MONEY': return `Added from ${ transaction.bankName } ••••${ transaction.lastFourDigits }`;
       case 'CASH_OUT': return `Cashed out to ${ transaction.bankName } ••••${ transaction.lastFourDigits }`;
-      case 'SEND': return `Sent to ${ transaction.peerName }`;
-      case 'RECEIVED': return `Received from ${ transaction.peerName }`;
+      case 'SEND': return transaction.moneyRequestId
+        ? `Paid request from ${ transaction.peerName }`
+        : `Sent to ${ transaction.peerName }`;
+      case 'RECEIVED': return transaction.moneyRequestId
+        ? `Request paid by ${ transaction.peerName }`
+        : `Received from ${ transaction.peerName }`;
     }
   }
 
@@ -55,6 +93,8 @@ export default function Activity() {
       year: 'numeric',
     } );
   }
+
+  const hasContent = feed.pendingRequests.length > 0 || feed.transactions.length > 0;
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -78,25 +118,80 @@ export default function Activity() {
 
       {/* Loading */}
       {loading && (
-        <Text style={styles.loadingText}>Loading transactions...</Text>
+        <Text style={styles.loadingText}>Loading activity...</Text>
       )}
 
       {/* Empty state */}
-      {!loading && !error && transactions.length === 0 && (
+      {!loading && !error && !hasContent && (
         <View style={styles.emptyBox}>
-          <Text style={styles.emptyText}>No transactions yet.</Text>
+          <Text style={styles.emptyText}>No activity yet.</Text>
           <Text style={styles.emptySubtext}>Add money or send to get started.</Text>
         </View>
       )}
 
-      {/* Transaction list */}
-      {!loading && transactions.length > 0 && (
-        <View style={styles.transactionsSection}>
-          {transactions.map( ( transaction ) => {
+      {/* Pending Requests */}
+      {!loading && feed.pendingRequests.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Pending Requests</Text>
+          {feed.pendingRequests.map( ( request: MoneyRequestDTO ) => {
+            const isRequester = request.requester === currentUsername;
+            return (
+              <View key={request.moneyRequestId} style={styles.requestItem}>
+                <View style={styles.requestIcon}>
+                  <FontAwesomeIcon icon={faClockRotateLeft} size={18} color="white" />
+                </View>
+                <View style={styles.requestDetails}>
+                  <Text style={styles.transactionName}>
+                    {isRequester
+                      ? `You requested $${ request.amount.toFixed( 2 ) } from ${ request.requestee }`
+                      : `${ request.requester } is requesting $${ request.amount.toFixed( 2 ) }`}
+                  </Text>
+                  {request.note ? <Text style={styles.requestNote}>{request.note}</Text> : null}
+                  <Text style={styles.transactionDate}>{formatDate( request.createdAt )}</Text>
+                  {!isRequester && (
+                    <View style={styles.requestActions}>
+                      <Pressable
+                        style={[styles.actionButton, styles.approveButton]}
+                        onPress={() => handleRespond( request.moneyRequestId, 'APPROVED' )}
+                        disabled={respondingId === request.moneyRequestId}
+                      >
+                        {respondingId === request.moneyRequestId
+                          ? <ActivityIndicator size="small" color="white" />
+                          : <Text style={styles.actionButtonText}>Approve</Text>}
+                      </Pressable>
+                      <Pressable
+                        style={[styles.actionButton, styles.declineButton]}
+                        onPress={() => handleRespond( request.moneyRequestId, 'DECLINED' )}
+                        disabled={respondingId === request.moneyRequestId}
+                      >
+                        <Text style={styles.actionButtonText}>Decline</Text>
+                      </Pressable>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.transactionAmount}>
+                  ${request.amount.toFixed( 2 )}
+                </Text>
+              </View>
+            );
+          } )}
+        </View>
+      )}
+
+      {/* Transactions */}
+      {!loading && feed.transactions.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Transactions</Text>
+          {feed.transactions.map( ( transaction: TransactionDTO ) => {
             const positive = isPositive( transaction.transactionType );
+            const isDeclined = transaction.transactionStatus === 'DECLINED';
             return (
               <View key={transaction.transactionId} style={styles.transactionItem}>
-                <View style={[styles.transactionIcon, positive && styles.transactionIconPositive]}>
+                <View style={[
+                  styles.transactionIcon,
+                  positive && !isDeclined && styles.transactionIconPositive,
+                  isDeclined && styles.transactionIconDeclined,
+                ]}>
                   <FontAwesomeIcon
                     icon={getIcon( transaction.transactionType )}
                     size={18}
@@ -105,9 +200,15 @@ export default function Activity() {
                 </View>
                 <View style={styles.transactionDetails}>
                   <Text style={styles.transactionName}>{getLabel( transaction )}</Text>
+                  {isDeclined && (
+                    <Text style={styles.declinedBadge}>Declined</Text>
+                  )}
                   <Text style={styles.transactionDate}>{formatDate( transaction.createdAt )}</Text>
                 </View>
-                <Text style={[styles.transactionAmount, positive ? styles.transactionAmountPositive : styles.transactionAmountNegative]}>
+                <Text style={[
+                  styles.transactionAmount,
+                  positive && !isDeclined ? styles.transactionAmountPositive : styles.transactionAmountNegative,
+                ]}>
                   {positive ? '+' : '-'}${transaction.amount.toFixed( 2 )}
                 </Text>
               </View>
@@ -158,7 +259,44 @@ const styles = StyleSheet.create( {
   },
   emptyText: { fontSize: 16, fontWeight: '700', color: colors.bodyText },
   emptySubtext: { fontSize: 14, color: colors.subtitleText },
-  transactionsSection: { gap: 4 },
+  section: { gap: 4 },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.subtitleText,
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  requestItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.card,
+    gap: 12,
+  },
+  requestIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#B45309',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  requestDetails: { flex: 1, gap: 4 },
+  requestNote: { fontSize: 13, color: colors.subtitleText },
+  requestActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  actionButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 80,
+  },
+  approveButton: { backgroundColor: '#1A6B3A' },
+  declineButton: { backgroundColor: colors.error },
+  actionButtonText: { color: 'white', fontWeight: '700', fontSize: 13 },
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -176,8 +314,10 @@ const styles = StyleSheet.create( {
     justifyContent: 'center',
   },
   transactionIconPositive: { backgroundColor: '#1A6B3A' },
+  transactionIconDeclined: { backgroundColor: colors.subtitleText },
   transactionDetails: { flex: 1, gap: 2 },
   transactionName: { fontSize: 15, fontWeight: '600', color: colors.bodyText },
+  declinedBadge: { fontSize: 12, color: colors.error, fontWeight: '600' },
   transactionDate: { fontSize: 12, color: colors.subtitleText },
   transactionAmount: { fontSize: 16, fontWeight: '700' },
   transactionAmountPositive: { color: '#1A6B3A' },
