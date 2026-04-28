@@ -211,13 +211,10 @@ export default function CashOutScreen() {
         {loadingAccounts ? (
           <Text style={styles.loadingText}>Loading accounts...</Text>
         ) : accounts.length === 0 ? (
-          <Pressable
-            style={styles.noAccountCard}
-            onPress={() => setShowLinkModal(true)}
-          >
-            <FontAwesomeIcon icon={faBuildingColumns} size={20} color={colors.primary} />
-            <Text style={styles.noAccountText}>No bank accounts linked. Tap to add one.</Text>
-          </Pressable>
+          <View style={styles.noAccountCard}>
+            <FontAwesomeIcon icon={faBuildingColumns} size={20} color={colors.subtitleText} />
+            <Text style={styles.noAccountText}>No bank accounts linked.</Text>
+          </View>
         ) : (
           <View style={styles.accountList}>
             {accounts.map((account) => {
@@ -264,7 +261,7 @@ export default function CashOutScreen() {
         {!loadingAccounts && accounts.length === 0 ? (
           <Pressable
             style={styles.cashOutButton}
-            onPress={() => router.push('/profile/linked-bank-accounts')}
+            onPress={() => setShowLinkModal(true)}
           >
             <Text style={styles.cashOutButtonText}>Link a Bank Account</Text>
           </Pressable>
@@ -434,7 +431,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     borderWidth: 1.5,
-    borderColor: colors.primary,
+    borderColor: 'transparent',
   },
   noAccountText: {
     flex: 1,
