@@ -8,7 +8,9 @@ import com.example.transfera.domain.user.UserCredentials;
 import com.example.transfera.domain.user.UserCredentialsRepository;
 import com.example.transfera.dto.ProfileDTO.CreateProfileRequestDTO;
 import com.example.transfera.dto.ProfileDTO.ProfileDTO;
+import com.example.transfera.exceptions.customExceptions.ProfileAlreadyExists;
 import com.example.transfera.exceptions.customExceptions.UserNotFound;
+import com.example.transfera.exceptions.customExceptions.UsernameAlreadyTaken;
 import com.example.transfera.service.transferaWallet.CreateTransferaWalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,9 @@ public class CreateProfileService implements Command<CreateProfileRequestDTO, Pr
     private final UserCredentialsRepository userCredentialsRepository;
     private final CreateTransferaWalletService createTransferaWalletService;
 
-    public CreateProfileService(ProfileRepository profileRepository,
-                                UserCredentialsRepository userCredentialsRepository, CreateTransferaWalletService createTransferaWalletService) {
+    public CreateProfileService( ProfileRepository profileRepository,
+                                UserCredentialsRepository userCredentialsRepository,
+                                 CreateTransferaWalletService createTransferaWalletService ) {
         this.profileRepository = profileRepository;
         this.userCredentialsRepository = userCredentialsRepository;
         this.createTransferaWalletService = createTransferaWalletService;
@@ -45,14 +48,12 @@ public class CreateProfileService implements Command<CreateProfileRequestDTO, Pr
 
         // 3. Check if profile already exists for this user
         if ( profileRepository.existsByUserCredentials( userCredentials ) ) {
-            System.out.println( ">>> [CreateProfileService] CONFLICT - profile already exists for: " + email );
-            return ResponseEntity.status( HttpStatus.CONFLICT ).build();
+            throw new ProfileAlreadyExists();
         }
 
         // 4. Check if the username is already taken
         if ( profileRepository.existsByUserName(request.getUserName() ) ) {
-            System.out.println( ">>> [CreateProfileService] CONFLICT - username already taken: " + request.getUserName() );
-            return ResponseEntity.status( HttpStatus.CONFLICT ).build();
+            throw new UsernameAlreadyTaken();
         }
 
         System.out.println( ">>> [CreateProfileService] Saving profile for: " + email + " username: " + request.getUserName() );

@@ -54,4 +54,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status( HttpStatus.UNPROCESSABLE_ENTITY ).body( new ErrorResponse( exception.getMessage() ) );
     }
 
+    @ExceptionHandler( UsernameAlreadyTaken.class )
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyTaken( UsernameAlreadyTaken ex ) {
+        return ResponseEntity.status( HttpStatus.CONFLICT ).body( new ErrorResponse( ex.getMessage() ) );
+    }
+
+    @ExceptionHandler( ProfileAlreadyExists.class )
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyTaken( ProfileAlreadyExists ex ) {
+        return ResponseEntity.status( HttpStatus.CONFLICT ).body( new ErrorResponse( ex.getMessage() ) );
+    }
 }

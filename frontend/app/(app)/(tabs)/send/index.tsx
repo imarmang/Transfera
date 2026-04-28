@@ -25,6 +25,7 @@ export default function Index() {
       getTransferaWalletRequest( session! )
         .then( ( data ) => setBalance( data.balance ) )
         .catch( () => {} );
+      setAmount('0');
     }, [] )
   );
 

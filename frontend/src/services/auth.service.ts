@@ -87,8 +87,13 @@ export async function createProfileRequest(
   });
 
   if (!res.ok) {
-    const data = await res.json();
-    throw new Error(data?.message ?? 'Failed to create profile.');
+    const text = await res.text().catch(() => "");
+    let message = "Failed to create profile.";
+    try {
+      const data = JSON.parse(text);
+      message = data?.message ?? message;
+    } catch {}
+    throw new Error(message);
   }
 }
 

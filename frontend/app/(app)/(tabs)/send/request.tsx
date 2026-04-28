@@ -53,7 +53,7 @@ export default function Request() {
     }, 300 );
 
     return () => clearTimeout( timer );
-  }, [ to ] );
+  }, [selected, session, to] );
 
   function handleSelect( profile: SearchProfileDTO ) {
     setSelected( profile );
@@ -249,10 +249,16 @@ const styles = StyleSheet.create( {
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.card,
+    backgroundColor: colors.primary,
   },
-  requestButtonDisabled: { opacity: 0.5 },
-  requestButtonText: { fontSize: 16, fontWeight: '700', color: colors.bodyText },
+  requestButtonDisabled: {
+    backgroundColor: colors.primaryDisabled,
+  },
+  requestButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.primaryText,
+  },
   errorBox: {
     marginHorizontal: 20,
     marginTop: 12,
