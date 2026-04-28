@@ -26,8 +26,6 @@ export default function CreateProfile() {
 
   async function onCreateProfile() {
     setError("");
-    console.log("onCreateProfile triggered");
-    console.log("Fields:", { userName, firstName, lastName, phoneNumber });
 
     if (!userName || !firstName || !lastName || !phoneNumber) {
       setError("Please fill in all fields.");
@@ -54,13 +52,13 @@ export default function CreateProfile() {
         phoneNumber,
       );
       console.log("Profile created successfully");
-      setHasProfile(true);
-    } catch (e) {
-      console.log("Error creating profile:", e);
-      setError("Failed to create profile. Please try again.");
+    } catch (e: any) {
+      setError(e?.message ?? "Failed to create profile. Please try again.");
+      return;
     } finally {
       setLoading(false);
     }
+    setHasProfile(true);
   }
   return (
     <KeyboardAvoidingView
@@ -88,7 +86,7 @@ export default function CreateProfile() {
               value={userName}
               onChangeText={setUserName}
               placeholder="johndoe"
-              placeholderTextColor={colors.bodyText}
+              placeholderTextColor={colors.subtitleText}
               autoCapitalize="none"
               autoCorrect={false}
               style={styles.input}
@@ -98,7 +96,7 @@ export default function CreateProfile() {
               value={firstName}
               onChangeText={setFirstName}
               placeholder="John"
-              placeholderTextColor={colors.bodyText}
+              placeholderTextColor={colors.subtitleText}
               style={styles.input}
             />
             <Text style={[styles.label, { marginTop: 12 }]}>Last Name</Text>
@@ -106,7 +104,7 @@ export default function CreateProfile() {
               value={lastName}
               onChangeText={setLastName}
               placeholder="Doe"
-              placeholderTextColor={colors.bodyText}
+              placeholderTextColor={colors.subtitleText}
               style={styles.input}
             />
             <Text style={[styles.label, { marginTop: 12 }]}>Phone Number</Text>
@@ -114,7 +112,7 @@ export default function CreateProfile() {
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               placeholder="+1 555 000 0000"
-              placeholderTextColor={colors.bodyText}
+              placeholderTextColor={colors.subtitleText}
               keyboardType="phone-pad"
               style={styles.input}
             />
