@@ -181,7 +181,7 @@ Transfera is composed of three components: a React Native mobile client, a Sprin
 │                                          │
 │  controller → service → repository       │
 └────────────────┬─────────────────────────┘
-                 │  JDBC / JPA
+                 │  Spring Data JPA / Hibernate
                  ▼
 ┌──────────────────────────────────────────┐
 │         PostgreSQL (AWS RDS)             │
@@ -234,8 +234,10 @@ public ResponseEntity<TransferaWalletDTO> sendMoney(@RequestBody SendMoneyReques
 }
 ```
 
-This makes the codebase navigable by behavior: to understand how a money request is created, you open `CreateMoneyRequestService`. To understand how it is responded to, you open `RespondToMoneyRequestService`. No need to scan a large multi-purpose service class.
-
+This makes the codebase navigable by behavior: to understand how money
+is sent, you open `SendMoneyTransferaWalletService`. To understand how
+a wallet is created, you open `CreateTransferaWalletService`. There is
+no `WalletService` with eight methods to scan through.
 ### Authentication
 
 Transfera supports two authentication methods: local email/password and Google OAuth2.
@@ -563,15 +565,19 @@ The `DELETE /api/v1/linked-bank-account/{id}` endpoint exists in `LinkedBankAcco
 
 ## What's Next
 
-- **Plaid integration** — replace the manual bank account form with real Plaid Link for verified account linking and ACH transfers
-- **AI Spending Insights** — natural language summaries of transaction patterns using the Claude API ("You sent money to the same person 6 times this month")
-- **Push notifications** — real-time alerts via Expo Notifications when a transfer is received or a money request arrives
-- **TestFlight release** — iOS public beta distribution
-- **Declined requests in activity feed** — surface declined money requests in transaction history using the existing `TransactionFactory.requestDeclined()` hook
-- **Redis-backed token blacklist** — replace the in-memory set with Redis + TTL for production-ready logout
-
----
-
+- **AI Spending Insights** — natural language summaries of transaction
+  patterns using the Claude API ("You sent money to the same person
+  6 times this month")
+- **Push notifications** — real-time alerts via Expo Notifications when
+  a transfer is received or a money request arrives
+- **Declined requests in activity feed** — surface declined money requests
+  in transaction history using the existing `TransactionFactory.requestDeclined()`
+  hook
+- **Redis-backed token blacklist** — replace the in-memory set with
+  Redis + TTL for production-ready logout
+- **Delete linked bank account** — wire `DeleteLinkedBankAccountService`
+  to the existing `DELETE /api/v1/linked-bank-account/{id}` endpoint
+- 
 ## License
 
-MIT
+[MIT](./LICENSE)
