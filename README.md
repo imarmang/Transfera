@@ -10,8 +10,20 @@
 
 Transfera is a full-stack mobile payment application inspired by Venmo and Cash App. Users can create a wallet, link bank accounts, send and request money from other users, and view their complete transaction history in an activity feed.
 
-![App Demo](./docs/demo.gif)
----
+## Demo
+<div align="center">
+  <img src="./docs/demo.gif" alt="Transfera Demo" width="350" />
+</div>
+
+## Screenshots
+<div align="center">
+  <img src="./docs/screenshots/send.PNG" width="200"/>
+  <img src="./docs/screenshots/addMoney.PNG" width="200"  />
+  <img src="./docs/screenshots/bank.PNG" width="200" />
+  <img src="./docs/screenshots/activity.PNG" width="200" />
+  <img src="./docs/screenshots/search.PNG" width="200" />
+    <img src="./docs/screenshots/wallet.PNG" width="200" />
+</div>
 
 ## Table of Contents
 
