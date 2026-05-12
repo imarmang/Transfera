@@ -8,21 +8,15 @@
 ![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonaws&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=githubactions&logoColor=white)
 
-Transfera is a full-stack mobile payment application inspired by Venmo and Cash App. Users can create a wallet, link bank accounts, send and request money from other users, and view their complete transaction history in an activity feed.
+Transfera is a full-stack mobile payment application inspired by Venmo
+and Cash App, built as a Computer Science Capstone project at Nova
+Southeastern University. Users can create a wallet, link bank accounts,
+send and request money from other users, and view their complete
+transaction history in an activity feed.
 
 ## Demo
 <div align="center">
   <img src="./docs/demo.gif" alt="Transfera Demo" width="350" />
-</div>
-
-## Screenshots
-<div align="center">
-  <img src="./docs/screenshots/send.PNG" width="200"/>
-  <img src="./docs/screenshots/addMoney.PNG" width="200"  />
-  <img src="./docs/screenshots/bank.PNG" width="200" />
-  <img src="./docs/screenshots/activity.PNG" width="200" />
-  <img src="./docs/screenshots/search.PNG" width="200" />
-    <img src="./docs/screenshots/wallet.PNG" width="200" />
 </div>
 
 ## Table of Contents
